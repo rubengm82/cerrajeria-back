@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\CustomSolution;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Auth;
 
 class CustomSolutionController extends Controller
 {
@@ -30,6 +31,14 @@ class CustomSolutionController extends Controller
             'description' => 'required|string',
             'status' => 'nullable|in:pending,closed',
         ]);
+
+        // Si el usuario está autenticado, guardar su ID automáticamente
+        if (Auth::check()) {
+            $validated['user_id'] = Auth::id();
+        } else {
+            // Si no está autenticado, dejar user_id como null
+            unset($validated['user_id']);
+        }
 
         $customSolution = CustomSolution::create($validated);
         return response()->json($customSolution, 201);

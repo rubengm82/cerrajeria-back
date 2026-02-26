@@ -15,10 +15,26 @@ use App\Http\Controllers\Api\ProductFeatureTypeController;
 use App\Http\Controllers\Api\FeatureController;
 use App\Http\Controllers\Api\CustomSolutionFileController;
 
-// Rutas públicas
+
+/* *************** */
+/* Rutas públicas  */
+/* *************** */
+
+// Ruta Login
 Route::post('/login', [AuthController::class, 'login']);
 
-// Rutas de categorías (protegidas)
+// Rutas de soluciones personalizadas
+Route::get('/custom-solutions', [CustomSolutionController::class, 'index']);
+Route::get('/custom-solutions/{id}', [CustomSolutionController::class, 'show']);
+Route::post('/custom-solutions', [CustomSolutionController::class, 'store']);
+
+
+
+/* ***************** */
+/* Rutas protegidas  */
+/* ***************** */
+
+// Rutas de categorías
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/categories', [CategoryController::class, 'index']);
     Route::post('/categories', [CategoryController::class, 'store']);
@@ -27,7 +43,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::delete('/categories/{id}', [CategoryController::class, 'destroy']);
 });
 
-// Rutas de productos (protegidas)
+// Rutas de productos
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/products', [ProductController::class, 'index']);
     Route::post('/products', [ProductController::class, 'store']);
@@ -36,7 +52,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::delete('/products/{id}', [ProductController::class, 'destroy']);
 });
 
-// Rutas de packs (protegidas)
+// Rutas de packs
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/packs', [PackController::class, 'index']);
     Route::post('/packs', [PackController::class, 'store']);
@@ -45,7 +61,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::delete('/packs/{id}', [PackController::class, 'destroy']);
 });
 
-// Rutas de pedidos (protegidas)
+// Rutas de pedidos
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/orders', [OrderController::class, 'index']);
     Route::post('/orders', [OrderController::class, 'store']);
@@ -54,16 +70,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::delete('/orders/{id}', [OrderController::class, 'destroy']);
 });
 
-// Rutas de soluciones personalizadas (protegidas)
-Route::middleware('auth:sanctum')->group(function () {
-    Route::get('/custom-solutions', [CustomSolutionController::class, 'index']);
-    Route::post('/custom-solutions', [CustomSolutionController::class, 'store']);
-    Route::get('/custom-solutions/{id}', [CustomSolutionController::class, 'show']);
-    Route::put('/custom-solutions/{id}', [CustomSolutionController::class, 'update']);
-    Route::delete('/custom-solutions/{id}', [CustomSolutionController::class, 'destroy']);
-});
-
-// Rutas de imágenes de productos (protegidas)
+// Rutas de imágenes de productos
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/product-images', [ProductImageController::class, 'index']);
     Route::post('/product-images', [ProductImageController::class, 'store']);
@@ -72,7 +79,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::delete('/product-images/{id}', [ProductImageController::class, 'destroy']);
 });
 
-// Rutas de imágenes de packs (protegidas)
+// Rutas de imágenes de packs
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/pack-images', [PackImageController::class, 'index']);
     Route::post('/pack-images', [PackImageController::class, 'store']);
@@ -81,7 +88,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::delete('/pack-images/{id}', [PackImageController::class, 'destroy']);
 });
 
-// Rutas de tipos de características (protegidas)
+// Rutas de tipos de características
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/product-feature-types', [ProductFeatureTypeController::class, 'index']);
     Route::post('/product-feature-types', [ProductFeatureTypeController::class, 'store']);
@@ -90,13 +97,24 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::delete('/product-feature-types/{id}', [ProductFeatureTypeController::class, 'destroy']);
 });
 
-// Rutas de características (protegidas)
+// Rutas de características
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/features', [FeatureController::class, 'index']);
     Route::post('/features', [FeatureController::class, 'store']);
     Route::get('/features/{id}', [FeatureController::class, 'show']);
     Route::put('/features/{id}', [FeatureController::class, 'update']);
     Route::delete('/features/{id}', [FeatureController::class, 'destroy']);
+});
+
+// Rutas de usuarios
+Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/user', [AuthController::class, 'user']);
+    Route::get('/users', [UserController::class, 'index']);
+    Route::post('/users', [UserController::class, 'store']);
+    Route::get('/users/{id}', [UserController::class, 'show']);
+    Route::put('/users/{id}', [UserController::class, 'update']);
+    Route::delete('/users/{id}', [UserController::class, 'destroy']);
+    Route::post('/logout', [AuthController::class, 'logout']);
 });
 
 // Rutas de archivos de soluciones personalizadas (protegidas)
@@ -108,13 +126,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::delete('/custom-solution-files/{id}', [CustomSolutionFileController::class, 'destroy']);
 });
 
-// Rutas de usuarios (protegidas)
+// Rutas de soluciones personalizadas (protegidas - solo admin)
 Route::middleware('auth:sanctum')->group(function () {
-    Route::get('/user', [AuthController::class, 'user']);
-    Route::get('/users', [UserController::class, 'index']);
-    Route::post('/users', [UserController::class, 'store']);
-    Route::get('/users/{id}', [UserController::class, 'show']);
-    Route::put('/users/{id}', [UserController::class, 'update']);
-    Route::delete('/users/{id}', [UserController::class, 'destroy']);
-    Route::post('/logout', [AuthController::class, 'logout']);
+    Route::put('/custom-solutions/{id}', [CustomSolutionController::class, 'update']);
+    Route::delete('/custom-solutions/{id}', [CustomSolutionController::class, 'destroy']);
 });
