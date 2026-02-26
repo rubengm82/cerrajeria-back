@@ -12,8 +12,8 @@ class Feature extends Model
     use HasFactory;
 
     protected $fillable = [
-        'nombre',
-        'valor',
+        'type_id',
+        'value',
     ];
 
     /**
@@ -21,7 +21,7 @@ class Feature extends Model
      */
     public function type(): BelongsTo
     {
-        return $this->belongsTo(ProductFeatureType::class, 'nombre');
+        return $this->belongsTo(FeatureType::class, 'type_id');
     }
 
     /**

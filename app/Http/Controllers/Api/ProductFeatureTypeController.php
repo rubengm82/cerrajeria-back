@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Models\ProductFeatureType;
+use App\Models\FeatureType;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 
@@ -14,7 +14,7 @@ class ProductFeatureTypeController extends Controller
      */
     public function index(): JsonResponse
     {
-        $types = ProductFeatureType::with('features')->get();
+        $types = FeatureType::with('features')->get();
         return response()->json($types);
     }
 
@@ -24,10 +24,10 @@ class ProductFeatureTypeController extends Controller
     public function store(Request $request): JsonResponse
     {
         $validated = $request->validate([
-            'nombre' => 'required|string|max:255',
+            'name' => 'required|string|max:255',
         ]);
 
-        $type = ProductFeatureType::create($validated);
+        $type = FeatureType::create($validated);
         return response()->json($type, 201);
     }
 
@@ -36,7 +36,7 @@ class ProductFeatureTypeController extends Controller
      */
     public function show(int $id): JsonResponse
     {
-        $type = ProductFeatureType::with('features')->findOrFail($id);
+        $type = FeatureType::with('features')->findOrFail($id);
         return response()->json($type);
     }
 
@@ -45,10 +45,10 @@ class ProductFeatureTypeController extends Controller
      */
     public function update(Request $request, int $id): JsonResponse
     {
-        $type = ProductFeatureType::findOrFail($id);
+        $type = FeatureType::findOrFail($id);
 
         $validated = $request->validate([
-            'nombre' => 'sometimes|string|max:255',
+            'name' => 'sometimes|string|max:255',
         ]);
 
         $type->update($validated);
@@ -60,7 +60,7 @@ class ProductFeatureTypeController extends Controller
      */
     public function destroy(int $id): JsonResponse
     {
-        $type = ProductFeatureType::findOrFail($id);
+        $type = FeatureType::findOrFail($id);
         $type->delete();
         return response()->json(['message' => 'Feature type deleted successfully']);
     }
