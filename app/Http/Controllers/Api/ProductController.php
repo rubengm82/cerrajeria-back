@@ -1,0 +1,89 @@
+<?php
+
+namespace App\Http\Controllers\Api;
+
+use App\Http\Controllers\Controller;
+use App\Models\Product;
+use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
+
+class ProductController extends Controller
+{
+    /**
+     * Display a listing of the resource.
+     */
+    public function index(): JsonResponse
+    {
+        $products = Product::with(['category', 'images', 'features'])->get();
+        return response()->json($products);
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     */
+    public function store(Request $request): JsonResponse
+    {
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'price' => 'required|numeric|min:0',
+            'stock' => 'required|integer|min:0',
+            'code' => 'required|string|unique:products,code|max:100',
+            'discount' => 'nullable|numeric|min:0|max:100',
+            'category' => 'required|exists:categories,id',
+            'is_installable' => 'nullable|boolean',
+            'is_important_to_show' => 'nullable|boolean',
+            'installation_price' => 'nullable|numeric|min:0',
+            'extra_keys' => 'nullable|integer|min:0',
+            'is_active' => 'nullable|boolean',
+        ]);
+
+        $product = Product::create($validated);
+        return response()->json($product, 201);
+    }
+
+    /**
+     * Display the specified resource.
+     */
+    public function show(int $id): JsonResponse
+    {
+        $product = Product::with(['category', 'images', 'features', 'packs', 'orders'])->findOrFail($id);
+        return response()->json($product);
+    }
+
+    /**
+     * Update the specified resource in storage.
+     */
+    public function update(Request $request, int $id): JsonResponse
+    {
+        $product = Product::findOrFail($id);
+
+        $validated = $request->validate([
+            'name' => 'sometimes|string|max:255',
+            'description' => 'nullable|string',
+            'price' => 'sometimes|numeric|min:0',
+            'stock' => 'sometimes|integer|min:0',
+            'code' => 'sometimes|string|unique:products,code|max:100',
+            'discount' => 'nullable|numeric|min:0|max:100',
+            'category' => 'sometimes|exists:categories,id',
+            'is_installable' => 'nullable|boolean',
+            'is_important_to_show' => 'nullable|boolean',
+            'installation_price' => 'nullable|numeric|min:0',
+            'extra_keys' => 'nullable|integer|min:0',
+            'is_active' => 'nullable|boolean',
+        ]);
+
+        $product->update($validated);
+        return response()->json($product);
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     */
+    public function destroy(int $id): JsonResponse
+    {
+        $product = Product::findOrFail($id);
+        $product->delete();
+        return response()->json(['message' => 'Product deleted successfully']);
+    }
+}

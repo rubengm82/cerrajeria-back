@@ -4,6 +4,7 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
@@ -20,8 +21,15 @@ class User extends Authenticatable
      */
     protected $fillable = [
         'name',
+        'last_name_one',
+        'last_name_second',
+        'dni',
+        'phone',
         'email',
+        'address',
+        'zip_code',
         'password',
+        'role',
     ];
 
     /**
@@ -45,5 +53,21 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    /**
+     * Relación: Un usuario tiene muchos pedidos.
+     */
+    public function orders(): HasMany
+    {
+        return $this->hasMany(Order::class, 'user_id');
+    }
+
+    /**
+     * Relación: Un usuario puede tener muchas soluciones personalizadas.
+     */
+    public function customSolutions(): HasMany
+    {
+        return $this->hasMany(CustomSolution::class, 'user_id');
     }
 }
