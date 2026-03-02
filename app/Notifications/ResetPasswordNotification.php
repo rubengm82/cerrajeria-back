@@ -58,7 +58,7 @@ class ResetPasswordNotification extends Notification
         $url = url(config('app.frontend_url') . "/reset-password?token=" . $this->token . "&email=" . urlencode($notifiable->email));
 
         return (new MailMessage)
-            ->subject('Restabliment de contrasenya')
+            ->subject('Restabliment de contrasenya - Serralleria Solidaria')
             ->view('vendor.notifications.email-reset-password', [
                 'url' => $url,
             ]);

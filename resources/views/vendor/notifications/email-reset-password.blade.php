@@ -142,7 +142,7 @@
 
                 <div style="margin-top: 40px; padding-top: 10px;">
                     <p style="margin-bottom: 0; color: #64748b; font-size: 15px;">Cordialment,</p>
-                    <p style="font-weight: 700; color: #ea580c; font-size: 18px; margin-top: 5px;">Serralleria Solidaria</p>
+                    <p style="font-weight: 700; color: #ea580c; font-size: 18px; margin-top: 5px;">Serralleria Solidària</p>
                 </div>
 
                 <hr class="divider">
