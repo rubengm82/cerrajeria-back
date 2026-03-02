@@ -1,9 +1,9 @@
 <?php
 
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\PasswordResetController;
 use App\Http\Controllers\Api\CategoryController;
 use App\Http\Controllers\Api\ProductController;
 use App\Http\Controllers\Api\PackController;
@@ -22,6 +22,10 @@ use App\Http\Controllers\Api\CustomSolutionFileController;
 
 // Ruta Login
 Route::post('/login', [AuthController::class, 'login']);
+
+// Rutas de recuperación de contraseña
+Route::post('/forgot-password', [PasswordResetController::class, 'forgotPassword']);
+Route::post('/reset-password', [PasswordResetController::class, 'resetPassword']);
 
 // Rutas de soluciones personalizadas
 Route::get('/custom-solutions', [CustomSolutionController::class, 'index']);
