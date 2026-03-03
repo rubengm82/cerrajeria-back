@@ -10,6 +10,8 @@ class ProductImageFile extends Model
 {
     use HasFactory;
 
+    protected $table = 'product_images_files';
+
     protected $fillable = [
         'product_id',
         'is_important',

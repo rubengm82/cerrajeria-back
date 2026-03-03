@@ -20,7 +20,7 @@ class Product extends Model
         'stock',
         'code',
         'discount',
-        'category',
+        'category_id',
         'is_installable',
         'is_important_to_show',
         'installation_price',
@@ -42,7 +42,7 @@ class Product extends Model
      */
     public function category(): BelongsTo
     {
-        return $this->belongsTo(Category::class, 'category');
+        return $this->belongsTo(Category::class, 'category_id');
     }
 
     /**

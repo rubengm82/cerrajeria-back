@@ -19,7 +19,7 @@ return new class extends Migration
             $table->integer('stock');
             $table->string('code')->unique();
             $table->decimal('discount', 5, 2)->nullable();
-            $table->foreignId('category')->constrained('categories')->onDelete('cascade');
+            $table->foreignId('category_id')->constrained('categories')->onDelete('cascade');
             $table->boolean('is_installable')->default(false);
             $table->boolean('is_important_to_show')->default(false);
             $table->decimal('installation_price', 10, 2)->nullable();
