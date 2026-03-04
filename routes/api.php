@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\PasswordResetController;
+use App\Http\Controllers\VerificationController;
 use App\Http\Controllers\Api\CategoryController;
 use App\Http\Controllers\Api\ProductController;
 use App\Http\Controllers\Api\PackController;
@@ -23,9 +24,16 @@ use App\Http\Controllers\Api\CustomSolutionFileController;
 // Ruta Login
 Route::post('/login', [AuthController::class, 'login']);
 
+// Ruta Registro (con verificación de email)
+Route::post('/register', [AuthController::class, 'register']);
+
 // Rutas de recuperación de contraseña
 Route::post('/forgot-password', [PasswordResetController::class, 'forgotPassword']);
 Route::post('/reset-password', [PasswordResetController::class, 'resetPassword']);
+
+// Rutas de verificación de email
+Route::post('/email/verification-notification', [VerificationController::class, 'sendVerificationEmail']);
+Route::get('/email/verify/{id}/{hash}', [VerificationController::class, 'verify'])->name('verification.verify');
 
 // Rutas de soluciones personalizadas
 Route::get('/custom-solutions', [CustomSolutionController::class, 'index']);
