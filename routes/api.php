@@ -27,6 +27,9 @@ Route::post('/login', [AuthController::class, 'login']);
 // Ruta Registro (con verificación de email)
 Route::post('/register', [AuthController::class, 'register']);
 
+// Reenviar email de verificación (sin estar logueado)
+Route::post('/resend-verification-email', [AuthController::class, 'resendVerificationEmail']);
+
 // Rutas de recuperación de contraseña
 Route::post('/forgot-password', [PasswordResetController::class, 'forgotPassword']);
 Route::post('/reset-password', [PasswordResetController::class, 'resetPassword']);

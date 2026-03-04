@@ -62,20 +62,26 @@ class AuthController extends Controller
             'password' => 'required',
         ]);
 
-        if (Auth::attempt($credentials)) {
-            // Crear token para el usuario
-            $token = $request->user()->createToken('auth-token')->plainTextToken;
-
-            return response()->json([
-                'message' => 'Login exitoso',
-                'user' => $request->user(),
-                'token' => $token,
+        if (!Auth::attempt($credentials)) {
+            throw ValidationException::withMessages([
+                'email' => ['Las credenciales no son correctas.'],
             ]);
         }
 
-        throw ValidationException::withMessages([
-            'email' => ['Las credenciales no son correctas.'],
-        ]);
+        $user = $request->user();
+
+        // Verificar que el email esté verificado
+        // y crear token para el usuario
+        return !$user->hasVerifiedEmail()
+            ? response()->json([
+                'message' => 'Has de verificar el teu correu electrònic abans d\'accedir.',
+                'email_verified' => false,
+            ], 403)
+            : response()->json([
+                'message' => 'Login exitoso',
+                'user' => $user,
+                'token' => $user->createToken('auth-token')->plainTextToken,
+            ]);
     }
 
     /**
@@ -97,5 +103,27 @@ class AuthController extends Controller
     public function user(Request $request)
     {
         return response()->json($request->user());
+    }
+
+    /**
+     * Reenviar email de verificación (sin estar logueado)
+     */
+    public function resendVerificationEmail(Request $request)
+    {
+        $request->validate([
+            'email' => 'required|email',
+        ]);
+
+        $user = User::where('email', $request->email)->first();
+
+        // Siempre devolvemos el mismo mensaje por seguridad
+        // para no revelar si el email existe o no
+        if ($user && !$user->hasVerifiedEmail()) {
+            $user->notify(new VerifyEmailNotification());
+        }
+
+        return response()->json([
+            'message' => 'Si el correu electrònic existeix i no està verificat, s\'ha enviat un nou enllaç de verificació.',
+        ]);
     }
 }
