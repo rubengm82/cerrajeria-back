@@ -25,10 +25,18 @@ class ProductImageController extends Controller
     {
         $validated = $request->validate([
             'product_id' => 'required|exists:products,id',
+            'image' => 'required|image|max:2048',
             'is_important' => 'nullable|boolean',
         ]);
 
-        $image = ProductImageFile::create($validated);
+        $path = $request->file('image')->store('products', 'public');
+
+        $image = ProductImageFile::create([
+            'product_id' => $validated['product_id'],
+            'path' => $path,
+            'is_important' => $request->boolean('is_important'),
+        ]);
+
         return response()->json($image, 201);
     }
 
