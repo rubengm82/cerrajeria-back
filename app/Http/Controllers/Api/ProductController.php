@@ -63,7 +63,7 @@ class ProductController extends Controller
             'description' => 'nullable|string',
             'price' => 'sometimes|numeric|min:0',
             'stock' => 'sometimes|integer|min:0',
-            'code' => 'sometimes|string|unique:products,code|max:100',
+            'code' => 'sometimes|string|max:100|unique:products,code,' . $product->id,
             'discount' => 'nullable|numeric|min:0|max:100',
             'category_id' => 'sometimes|exists:categories,id',
             'is_installable' => 'nullable|boolean',
