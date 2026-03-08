@@ -14,7 +14,7 @@ class FeatureController extends Controller
      */
     public function index(): JsonResponse
     {
-        $features = Feature::with(['type', 'products'])->get();
+        $features = Feature::with(['type'])->get();
         return response()->json($features);
     }
 
@@ -24,8 +24,8 @@ class FeatureController extends Controller
     public function store(Request $request): JsonResponse
     {
         $validated = $request->validate([
-            'nombre' => 'required|exists:product_feature_types,id',
-            'valor' => 'required|integer',
+            'type_id' => 'required|exists:feature_types,id',
+            'value' => 'required|string|max:255',
         ]);
 
         $feature = Feature::create($validated);
@@ -49,8 +49,8 @@ class FeatureController extends Controller
         $feature = Feature::findOrFail($id);
 
         $validated = $request->validate([
-            'nombre' => 'sometimes|exists:product_feature_types,id',
-            'valor' => 'sometimes|integer',
+            'type_id' => 'sometimes|exists:feature_types,id',
+            'value' => 'sometimes|string|max:255',
         ]);
 
         $feature->update($validated);

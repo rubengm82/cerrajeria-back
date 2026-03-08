@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\PackImageFile;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Storage;
 
 class PackImageController extends Controller
 {
@@ -24,11 +25,19 @@ class PackImageController extends Controller
     public function store(Request $request): JsonResponse
     {
         $validated = $request->validate([
-            'packs_id' => 'required|exists:packs,id',
+            'pack_id' => 'required|exists:packs,id',
+            'image' => 'required|image|max:2048',
             'is_important' => 'nullable|boolean',
         ]);
 
-        $image = PackImageFile::create($validated);
+        $path = $request->file('image')->store('packs', 'public');
+
+        $image = PackImageFile::create([
+            'packs_id' => $validated['pack_id'],
+            'path' => $path,
+            'is_important' => $request->boolean('is_important'),
+        ]);
+
         return response()->json($image, 201);
     }
 
@@ -49,9 +58,14 @@ class PackImageController extends Controller
         $image = PackImageFile::findOrFail($id);
 
         $validated = $request->validate([
-            'packs_id' => 'sometimes|exists:packs,id',
+            'pack_id' => 'sometimes|exists:packs,id',
             'is_important' => 'nullable|boolean',
         ]);
+
+        if (isset($validated['pack_id'])) {
+            $validated['packs_id'] = $validated['pack_id'];
+            unset($validated['pack_id']);
+        }
 
         $image->update($validated);
         return response()->json($image);
@@ -63,6 +77,12 @@ class PackImageController extends Controller
     public function destroy(int $id): JsonResponse
     {
         $image = PackImageFile::findOrFail($id);
+        
+        // Eliminar el archivo del storage
+        if ($image->path && Storage::disk('public')->exists($image->path)) {
+            Storage::disk('public')->delete($image->path);
+        }
+
         $image->delete();
         return response()->json(['message' => 'Image deleted successfully']);
     }

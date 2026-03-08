@@ -10,8 +10,11 @@ class PackImageFile extends Model
 {
     use HasFactory;
 
+    protected $table = 'pack_images_files';
+
     protected $fillable = [
         'packs_id',
+        'path',
         'is_important',
     ];
 

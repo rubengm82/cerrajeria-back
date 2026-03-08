@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Storage;
 
 class CategoryController extends Controller
 {
@@ -25,10 +26,12 @@ class CategoryController extends Controller
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
-            'image' => 'required|string|max:255',
+            'image' => 'required|image|max:2048',
         ]);
+        // Se sube la imagen
+        $image = $request->file('image')->store('categories', 'public');
 
-        $category = Category::create($validated);
+        $category = Category::create(['name' => $validated['name'], 'image' => $image]);
         return response()->json($category, 201);
     }
 
@@ -50,9 +53,17 @@ class CategoryController extends Controller
 
         $validated = $request->validate([
             'name' => 'sometimes|string|max:255',
-            'image' => 'sometimes|string|max:255',
+            'image' => 'nullable|image|max:2048',
         ]);
 
+        // Se borrar imagen anterior si existe
+        if ($request->hasFile('image')) {
+            if ($category->image && Storage::disk('public')->exists($category->image)) {
+                Storage::disk('public')->delete($category->image);
+            }
+            // Se guarda la nueva imagen
+            $validated['image'] = $request->file('image')->store('categories', 'public');
+        }
         $category->update($validated);
         return response()->json($category);
     }

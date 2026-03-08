@@ -14,7 +14,7 @@ class ProductController extends Controller
      */
     public function index(): JsonResponse
     {
-        $products = Product::with(['category', 'images', 'features'])->get();
+        $products = Product::with(['category', 'images', 'features.type'])->get();
         return response()->json($products);
     }
 
@@ -36,10 +36,17 @@ class ProductController extends Controller
             'installation_price' => 'nullable|numeric|min:0',
             'extra_keys' => 'nullable|integer|min:0',
             'is_active' => 'nullable|boolean',
+            'feature_ids' => 'nullable|array',
+            'feature_ids.*' => 'exists:features,id',
         ]);
 
         $product = Product::create($validated);
-        return response()->json($product, 201);
+
+        if (!empty($validated['feature_ids'])) {
+            $product->features()->attach($validated['feature_ids']);
+        }
+
+        return response()->json($product->load('features.type'), 201);
     }
 
     /**
@@ -47,7 +54,7 @@ class ProductController extends Controller
      */
     public function show(int $id): JsonResponse
     {
-        $product = Product::with(['category', 'images', 'features', 'packs', 'orders'])->findOrFail($id);
+        $product = Product::with(['category', 'images', 'features.type', 'packs', 'orders'])->findOrFail($id);
         return response()->json($product);
     }
 
@@ -71,10 +78,17 @@ class ProductController extends Controller
             'installation_price' => 'nullable|numeric|min:0',
             'extra_keys' => 'nullable|integer|min:0',
             'is_active' => 'nullable|boolean',
+            'feature_ids' => 'nullable|array',
+            'feature_ids.*' => 'exists:features,id',
         ]);
 
         $product->update($validated);
-        return response()->json($product);
+
+        if (isset($validated['feature_ids'])) {
+            $product->features()->sync($validated['feature_ids']);
+        }
+
+        return response()->json($product->load('features.type'));
     }
 
     /**

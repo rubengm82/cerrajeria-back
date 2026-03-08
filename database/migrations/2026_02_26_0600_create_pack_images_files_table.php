@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('pack_images_files', function (Blueprint $table) {
             $table->id();
             $table->foreignId('packs_id')->constrained('packs')->onDelete('cascade');
+            $table->string("path");
             $table->boolean('is_important')->default(false);
             $table->timestamps();
         });

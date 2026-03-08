@@ -27,9 +27,17 @@ class PackController extends Controller
             'name' => 'required|string|max:255',
             'total_price' => 'required|integer|min:0',
             'description' => 'nullable|string',
+
+            'product_ids' => 'nullable|array',
+            'product_ids.*' => 'exists:products,id',
         ]);
 
-        $pack = Pack::create($validated);
+        $pack = Pack::create(['name' => $validated['name'], 'total_price' => $validated['total_price'], 'description' => $validated['description'] ?? null]);
+
+        // Si se envian productos se añaden en los productos del pack
+        if (!empty($validated['product_ids'])) {
+            $pack->products()->attach($validated['product_ids']);
+        }
         return response()->json($pack, 201);
     }
 
@@ -53,9 +61,21 @@ class PackController extends Controller
             'name' => 'sometimes|string|max:255',
             'total_price' => 'sometimes|integer|min:0',
             'description' => 'nullable|string',
+
+            'product_ids' => 'nullable|array',
+            'product_ids.*' => 'exists:products,id',
         ]);
 
-        $pack->update($validated);
+        $pack->update([
+            'name' => $validated['name'] ?? $pack->name,
+            'total_price' => $validated['total_price'] ?? $pack->total_price,
+            'description' => $validated['description'] ?? $pack->description,
+        ]);
+
+        // Se buscan los productos que pertenecen al pack que no se han enviado y se eliminan y se crean los nuevos
+        if (array_key_exists('product_ids', $validated)) {
+            $pack->products()->sync($validated['product_ids']);
+        }
         return response()->json($pack);
     }
 
