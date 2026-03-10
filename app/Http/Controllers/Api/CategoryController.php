@@ -7,6 +7,7 @@ use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\Rule;
 
 class CategoryController extends Controller
 {
@@ -25,7 +26,7 @@ class CategoryController extends Controller
     public function store(Request $request): JsonResponse
     {
         $validated = $request->validate([
-            'name' => 'required|string|max:255',
+            'name' => ['required', 'string', 'max:255', Rule::unique('categories')->where(function ($query) use ($request) { return $query->whereRaw('LOWER(name) = ?', [strtolower($request->name)]); })],
             'image' => 'required|image|max:2048',
         ]);
         // Se sube la imagen
@@ -52,7 +53,7 @@ class CategoryController extends Controller
         $category = Category::findOrFail($id);
 
         $validated = $request->validate([
-            'name' => 'sometimes|string|max:255',
+            'name' => ['sometimes', 'string', 'max:255', Rule::unique('categories')->where(function ($query) use ($request) { return $query->whereRaw('LOWER(name) = ?', [strtolower($request->name)]); })->ignore($id)],
             'image' => 'nullable|image|max:2048',
         ]);
 

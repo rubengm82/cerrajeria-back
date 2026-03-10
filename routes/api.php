@@ -12,7 +12,7 @@ use App\Http\Controllers\Api\OrderController;
 use App\Http\Controllers\Api\CustomSolutionController;
 use App\Http\Controllers\Api\ProductImageController;
 use App\Http\Controllers\Api\PackImageController;
-use App\Http\Controllers\Api\ProductFeatureTypeController;
+use App\Http\Controllers\Api\FeatureTypeController;
 use App\Http\Controllers\Api\FeatureController;
 use App\Http\Controllers\Api\CustomSolutionFileController;
 
@@ -105,11 +105,11 @@ Route::middleware('auth:sanctum')->group(function () {
 
 // Rutas de tipos de características
 Route::middleware('auth:sanctum')->group(function () {
-    Route::get('/product-feature-types', [ProductFeatureTypeController::class, 'index']);
-    Route::post('/product-feature-types', [ProductFeatureTypeController::class, 'store']);
-    Route::get('/product-feature-types/{id}', [ProductFeatureTypeController::class, 'show']);
-    Route::put('/product-feature-types/{id}', [ProductFeatureTypeController::class, 'update']);
-    Route::delete('/product-feature-types/{id}', [ProductFeatureTypeController::class, 'destroy']);
+    Route::get('/feature-types', [FeatureTypeController::class, 'index']);
+    Route::post('/feature-types', [FeatureTypeController::class, 'store']);
+    Route::get('/feature-types/{id}', [FeatureTypeController::class, 'show']);
+    Route::put('/feature-types/{id}', [FeatureTypeController::class, 'update']);
+    Route::delete('/feature-types/{id}', [FeatureTypeController::class, 'destroy']);
 });
 
 // Rutas de características

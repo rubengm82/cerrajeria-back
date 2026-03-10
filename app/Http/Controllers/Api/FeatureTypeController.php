@@ -6,8 +6,9 @@ use App\Http\Controllers\Controller;
 use App\Models\FeatureType;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Validation\Rule;
 
-class ProductFeatureTypeController extends Controller
+class FeatureTypeController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -24,7 +25,7 @@ class ProductFeatureTypeController extends Controller
     public function store(Request $request): JsonResponse
     {
         $validated = $request->validate([
-            'name' => 'required|string|max:255',
+            'name' => ['required', 'string', 'max:255', Rule::unique('feature_types')->where(function ($query) use ($request) { return $query->whereRaw('LOWER(name) = ?', [strtolower($request->name)]); })],
         ]);
 
         $type = FeatureType::create($validated);
@@ -48,7 +49,7 @@ class ProductFeatureTypeController extends Controller
         $type = FeatureType::findOrFail($id);
 
         $validated = $request->validate([
-            'name' => 'sometimes|string|max:255',
+            'name' => ['sometimes', 'string', 'max:255', Rule::unique('feature_types')->where(function ($query) use ($request) { return $query->whereRaw('LOWER(name) = ?', [strtolower($request->name)]); })->ignore($id)],
         ]);
 
         $type->update($validated);
