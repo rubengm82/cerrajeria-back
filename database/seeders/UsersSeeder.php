@@ -24,7 +24,8 @@ class UsersSeeder extends Seeder
                 'address' => 'Calle Principal 1',
                 'zip_code' => '08001',
                 'password' => 'admin',
-                'role' => 'admin'
+                'role' => 'admin',
+                'email_verified_at' => now(),
             ],
         ];
         

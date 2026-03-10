@@ -5,32 +5,14 @@ namespace App\Notifications;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class ResetPasswordNotification extends Notification
+class VerifyEmailNotification extends Notification
 {
-    /**
-     * The password reset token.
-     *
-     * @var string
-     */
-    public $token;
-
     /**
      * The callback that should be used to build the mail message.
      *
      * @var \Closure|null
      */
     public static $toMailCallback;
-
-    /**
-     * Create a notification instance.
-     *
-     * @param  string  $token
-     * @return void
-     */
-    public function __construct($token)
-    {
-        $this->token = $token;
-    }
 
     /**
      * Get the notification's channels.
@@ -52,14 +34,14 @@ class ResetPasswordNotification extends Notification
     public function toMail($notifiable)
     {
         if (static::$toMailCallback) {
-            return call_user_func(static::$toMailCallback, $notifiable, $this->token);
+            return call_user_func(static::$toMailCallback, $notifiable);
         }
 
-        $url = url(config('app.frontend_url') . "/reset-password?token=" . $this->token . "&email=" . urlencode($notifiable->email));
+        $url = url(config('app.frontend_url') . '/verify-email?id=' . $notifiable->id . '&hash=' . sha1($notifiable->email));
 
         return (new MailMessage)
-            ->subject('Restabliment de contrasenya - Serralleria Solidària')
-            ->view('vendor.notifications.email-reset-password', [
+            ->subject('Verifica el teu correu electrònic - Serralleria Solidària')
+            ->view('vendor.notifications.email-verification', [
                 'url' => $url,
             ]);
     }
