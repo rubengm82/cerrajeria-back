@@ -13,9 +13,10 @@ return new class extends Migration
     {
         Schema::create('features', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('type_id')->constrained('feature_types')->onDelete('cascade');
+            $table->foreignId('type_id')->nullable()->constrained('feature_types')->onDelete('set null');
             $table->string('value');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

@@ -14,12 +14,13 @@ return new class extends Migration
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
             $table->enum('status', ['in_cart', 'pending', 'shipped', 'installation_confirmed'])->default('in_cart');
-            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
+            $table->foreignId('user_id')->nullable()->constrained('users')->onDelete('set null');
             $table->string('installation_address');
             $table->string('shipping_address');
             $table->timestamp('shipped_at')->nullable();
             $table->enum('payment_method', ['paypal', 'card', 'bizum']);
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 
