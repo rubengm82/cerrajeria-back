@@ -21,6 +21,15 @@ class CategoryController extends Controller
     }
 
     /**
+     * Display a listing of all categories including soft deleted.
+     */
+    public function indexWithTrashed(): JsonResponse
+    {
+        $categories = Category::withTrashed()->with('products')->get();
+        return response()->json($categories);
+    }
+
+    /**
      * Store a newly created resource in storage.
      */
     public function store(Request $request): JsonResponse

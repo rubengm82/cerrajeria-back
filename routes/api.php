@@ -52,6 +52,7 @@ Route::post('/custom-solutions', [CustomSolutionController::class, 'store']);
 // Rutas de categorías
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/categories', [CategoryController::class, 'index']);
+    Route::get('/categories/with-trashed', [CategoryController::class, 'indexWithTrashed']);
     Route::post('/categories', [CategoryController::class, 'store']);
     Route::get('/categories/{id}', [CategoryController::class, 'show']);
     Route::put('/categories/{id}', [CategoryController::class, 'update']);
