@@ -19,6 +19,15 @@ class PackController extends Controller
     }
 
     /**
+     * Display a listing of the resource with trashed.
+     */
+    public function indexWithTrashed(): JsonResponse
+    {
+        $packs = Pack::withTrashed()->with(['products', 'images'])->get();
+        return response()->json($packs);
+    }
+
+    /**
      * Store a newly created resource in storage.
      */
     public function store(Request $request): JsonResponse

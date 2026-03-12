@@ -20,6 +20,15 @@ class FeatureTypeController extends Controller
     }
 
     /**
+     * Display a listing of the resource with trashed.
+     */
+    public function indexWithTrashed(): JsonResponse
+    {
+        $types = FeatureType::withTrashed()->with('features')->get();
+        return response()->json($types);
+    }
+
+    /**
      * Store a newly created resource in storage.
      */
     public function store(Request $request): JsonResponse

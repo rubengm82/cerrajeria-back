@@ -19,6 +19,15 @@ class ProductController extends Controller
     }
 
     /**
+     * Display a listing of the resource with trashed.
+     */
+    public function indexWithTrashed(): JsonResponse
+    {
+        $products = Product::withTrashed()->with(['category', 'images', 'features.type'])->get();
+        return response()->json($products);
+    }
+
+    /**
      * Store a newly created resource in storage.
      */
     public function store(Request $request): JsonResponse

@@ -19,6 +19,15 @@ class FeatureController extends Controller
     }
 
     /**
+     * Display a listing of the resource with trashed.
+     */
+    public function indexWithTrashed(): JsonResponse
+    {
+        $features = Feature::withTrashed()->with(['type'])->get();
+        return response()->json($features);
+    }
+
+    /**
      * Store a newly created resource in storage.
      */
     public function store(Request $request): JsonResponse

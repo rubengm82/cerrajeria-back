@@ -65,6 +65,7 @@ Route::middleware('auth:sanctum')->group(function () {
 // Rutas de productos
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/products', [ProductController::class, 'index']);
+    Route::get('/products/with-trashed', [ProductController::class, 'indexWithTrashed']);
     Route::post('/products', [ProductController::class, 'store']);
     Route::get('/products/{id}', [ProductController::class, 'show']);
     Route::put('/products/{id}', [ProductController::class, 'update']);
@@ -77,6 +78,7 @@ Route::middleware('auth:sanctum')->group(function () {
 // Rutas de packs
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/packs', [PackController::class, 'index']);
+    Route::get('/packs/with-trashed', [PackController::class, 'indexWithTrashed']);
     Route::post('/packs', [PackController::class, 'store']);
     Route::get('/packs/{id}', [PackController::class, 'show']);
     Route::put('/packs/{id}', [PackController::class, 'update']);
@@ -119,6 +121,7 @@ Route::middleware('auth:sanctum')->group(function () {
 // Rutas de tipos de características
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/feature-types', [FeatureTypeController::class, 'index']);
+    Route::get('/feature-types/with-trashed', [FeatureTypeController::class, 'indexWithTrashed']);
     Route::post('/feature-types', [FeatureTypeController::class, 'store']);
     Route::get('/feature-types/{id}', [FeatureTypeController::class, 'show']);
     Route::put('/feature-types/{id}', [FeatureTypeController::class, 'update']);
@@ -131,6 +134,7 @@ Route::middleware('auth:sanctum')->group(function () {
 // Rutas de características
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/features', [FeatureController::class, 'index']);
+    Route::get('/features/with-trashed', [FeatureController::class, 'indexWithTrashed']);
     Route::post('/features', [FeatureController::class, 'store']);
     Route::get('/features/{id}', [FeatureController::class, 'show']);
     Route::put('/features/{id}', [FeatureController::class, 'update']);
