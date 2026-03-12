@@ -27,12 +27,13 @@ class CategoryController extends Controller
     {
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:255', Rule::unique('categories')->where(function ($query) use ($request) { return $query->whereRaw('LOWER(name) = ?', [strtolower($request->name)]); })],
+            'is_important_to_show' => 'required|boolean',
             'image' => 'required|image|max:2048',
         ]);
         // Se sube la imagen
         $image = $request->file('image')->store('categories', 'public');
 
-        $category = Category::create(['name' => $validated['name'], 'image' => $image]);
+        $category = Category::create(['name' => $validated['name'], 'is_important_to_show' => $validated['is_important_to_show'], 'image' => $image]);
         return response()->json($category, 201);
     }
 
@@ -45,6 +46,12 @@ class CategoryController extends Controller
         return response()->json($category);
     }
 
+    public function getImportantCategories(): JsonResponse
+    {
+        $importantCategories = Category::where("is_important_to_show", true)->with("products")->get();
+        return response()->json($importantCategories);
+    }
+
     /**
      * Update the specified resource in storage.
      */
@@ -54,6 +61,7 @@ class CategoryController extends Controller
 
         $validated = $request->validate([
             'name' => ['sometimes', 'string', 'max:255', Rule::unique('categories')->where(function ($query) use ($request) { return $query->whereRaw('LOWER(name) = ?', [strtolower($request->name)]); })->ignore($id)],
+            'is_important_to_show' => 'required|boolean',
             'image' => 'nullable|image|max:2048',
         ]);
 

@@ -50,6 +50,7 @@ Route::post('/custom-solutions', [CustomSolutionController::class, 'store']);
 /* ***************** */
 
 // Rutas de categorías
+Route::get('/categories/important', [CategoryController::class, 'getImportantCategories']);
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/categories', [CategoryController::class, 'index']);
     Route::post('/categories', [CategoryController::class, 'store']);
@@ -58,9 +59,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::delete('/categories/{id}', [CategoryController::class, 'destroy']);
 });
 
-Route::get('/products/important', [ProductController::class, 'getImportantProducts']);
-
 // Rutas de productos
+Route::get('/products/important', [ProductController::class, 'getImportantProducts']);
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/products', [ProductController::class, 'index']);
     Route::post('/products', [ProductController::class, 'store']);
