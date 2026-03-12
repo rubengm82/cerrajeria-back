@@ -56,6 +56,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/categories/{id}', [CategoryController::class, 'show']);
     Route::put('/categories/{id}', [CategoryController::class, 'update']);
     Route::delete('/categories/{id}', [CategoryController::class, 'destroy']);
+    Route::get('/categories/trashed', [CategoryController::class, 'trashed']);
+    Route::post('/categories/{id}/restore', [CategoryController::class, 'restore']);
+    Route::delete('/categories/{id}/force', [CategoryController::class, 'forceDelete']);
 });
 
 // Rutas de productos
@@ -65,6 +68,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/products/{id}', [ProductController::class, 'show']);
     Route::put('/products/{id}', [ProductController::class, 'update']);
     Route::delete('/products/{id}', [ProductController::class, 'destroy']);
+    Route::get('/products/trashed', [ProductController::class, 'trashed']);
+    Route::post('/products/{id}/restore', [ProductController::class, 'restore']);
+    Route::delete('/products/{id}/force', [ProductController::class, 'forceDelete']);
 });
 
 // Rutas de packs
@@ -74,6 +80,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/packs/{id}', [PackController::class, 'show']);
     Route::put('/packs/{id}', [PackController::class, 'update']);
     Route::delete('/packs/{id}', [PackController::class, 'destroy']);
+    Route::get('/packs/trashed', [PackController::class, 'trashed']);
+    Route::post('/packs/{id}/restore', [PackController::class, 'restore']);
+    Route::delete('/packs/{id}/force', [PackController::class, 'forceDelete']);
 });
 
 // Rutas de pedidos
@@ -83,6 +92,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/orders/{id}', [OrderController::class, 'show']);
     Route::put('/orders/{id}', [OrderController::class, 'update']);
     Route::delete('/orders/{id}', [OrderController::class, 'destroy']);
+    Route::get('/orders/trashed', [OrderController::class, 'trashed']);
+    Route::post('/orders/{id}/restore', [OrderController::class, 'restore']);
+    Route::delete('/orders/{id}/force', [OrderController::class, 'forceDelete']);
 });
 
 // Rutas de imágenes de productos
@@ -110,6 +122,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/feature-types/{id}', [FeatureTypeController::class, 'show']);
     Route::put('/feature-types/{id}', [FeatureTypeController::class, 'update']);
     Route::delete('/feature-types/{id}', [FeatureTypeController::class, 'destroy']);
+    Route::get('/feature-types/trashed', [FeatureTypeController::class, 'trashed']);
+    Route::post('/feature-types/{id}/restore', [FeatureTypeController::class, 'restore']);
+    Route::delete('/feature-types/{id}/force', [FeatureTypeController::class, 'forceDelete']);
 });
 
 // Rutas de características
@@ -119,6 +134,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/features/{id}', [FeatureController::class, 'show']);
     Route::put('/features/{id}', [FeatureController::class, 'update']);
     Route::delete('/features/{id}', [FeatureController::class, 'destroy']);
+    Route::get('/features/trashed', [FeatureController::class, 'trashed']);
+    Route::post('/features/{id}/restore', [FeatureController::class, 'restore']);
+    Route::delete('/features/{id}/force', [FeatureController::class, 'forceDelete']);
 });
 
 // Rutas de usuarios
@@ -145,4 +163,7 @@ Route::middleware('auth:sanctum')->group(function () {
 Route::middleware('auth:sanctum')->group(function () {
     Route::put('/custom-solutions/{id}', [CustomSolutionController::class, 'update']);
     Route::delete('/custom-solutions/{id}', [CustomSolutionController::class, 'destroy']);
+    Route::get('/custom-solutions/trashed', [CustomSolutionController::class, 'trashed']);
+    Route::post('/custom-solutions/{id}/restore', [CustomSolutionController::class, 'restore']);
+    Route::delete('/custom-solutions/{id}/force', [CustomSolutionController::class, 'forceDelete']);
 });

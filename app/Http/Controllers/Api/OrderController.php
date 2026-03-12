@@ -73,4 +73,33 @@ class OrderController extends Controller
         $order->delete();
         return response()->json(['message' => 'Order deleted successfully']);
     }
+
+    /**
+     * Display a listing of the trashed resources.
+     */
+    public function trashed(): JsonResponse
+    {
+        $orders = Order::onlyTrashed()->with(['user', 'products'])->get();
+        return response()->json($orders);
+    }
+
+    /**
+     * Restore the specified resource from trash.
+     */
+    public function restore(int $id): JsonResponse
+    {
+        $order = Order::onlyTrashed()->findOrFail($id);
+        $order->restore();
+        return response()->json(['message' => 'Order restored successfully', 'order' => $order]);
+    }
+
+    /**
+     * Permanently remove the specified resource from storage.
+     */
+    public function forceDelete(int $id): JsonResponse
+    {
+        $order = Order::onlyTrashed()->findOrFail($id);
+        $order->forceDelete();
+        return response()->json(['message' => 'Order permanently deleted']);
+    }
 }

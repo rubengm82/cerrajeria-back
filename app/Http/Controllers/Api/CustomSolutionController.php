@@ -81,4 +81,33 @@ class CustomSolutionController extends Controller
         $customSolution->delete();
         return response()->json(['message' => 'Custom solution deleted successfully']);
     }
+
+    /**
+     * Display a listing of the trashed resources.
+     */
+    public function trashed(): JsonResponse
+    {
+        $customSolutions = CustomSolution::onlyTrashed()->with(['user', 'files'])->get();
+        return response()->json($customSolutions);
+    }
+
+    /**
+     * Restore the specified resource from trash.
+     */
+    public function restore(int $id): JsonResponse
+    {
+        $customSolution = CustomSolution::onlyTrashed()->findOrFail($id);
+        $customSolution->restore();
+        return response()->json(['message' => 'Custom solution restored successfully', 'customSolution' => $customSolution]);
+    }
+
+    /**
+     * Permanently remove the specified resource from storage.
+     */
+    public function forceDelete(int $id): JsonResponse
+    {
+        $customSolution = CustomSolution::onlyTrashed()->findOrFail($id);
+        $customSolution->forceDelete();
+        return response()->json(['message' => 'Custom solution permanently deleted']);
+    }
 }

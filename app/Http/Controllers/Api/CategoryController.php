@@ -78,4 +78,39 @@ class CategoryController extends Controller
         $category->delete();
         return response()->json(['message' => 'Category deleted successfully']);
     }
+
+    /**
+     * Display a listing of the trashed resources.
+     */
+    public function trashed(): JsonResponse
+    {
+        $categories = Category::onlyTrashed()->get();
+        return response()->json($categories);
+    }
+
+    /**
+     * Restore the specified resource from trash.
+     */
+    public function restore(int $id): JsonResponse
+    {
+        $category = Category::onlyTrashed()->findOrFail($id);
+        $category->restore();
+        return response()->json(['message' => 'Category restored successfully', 'category' => $category]);
+    }
+
+    /**
+     * Permanently remove the specified resource from storage.
+     */
+    public function forceDelete(int $id): JsonResponse
+    {
+        $category = Category::onlyTrashed()->findOrFail($id);
+        
+        // Delete image if exists
+        if ($category->image && Storage::disk('public')->exists($category->image)) {
+            Storage::disk('public')->delete($category->image);
+        }
+        
+        $category->forceDelete();
+        return response()->json(['message' => 'Category permanently deleted']);
+    }
 }

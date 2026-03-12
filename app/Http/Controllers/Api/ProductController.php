@@ -100,4 +100,33 @@ class ProductController extends Controller
         $product->delete();
         return response()->json(['message' => 'Product deleted successfully']);
     }
+
+    /**
+     * Display a listing of the trashed resources.
+     */
+    public function trashed(): JsonResponse
+    {
+        $products = Product::onlyTrashed()->with(['category', 'images', 'features.type'])->get();
+        return response()->json($products);
+    }
+
+    /**
+     * Restore the specified resource from trash.
+     */
+    public function restore(int $id): JsonResponse
+    {
+        $product = Product::onlyTrashed()->findOrFail($id);
+        $product->restore();
+        return response()->json(['message' => 'Product restored successfully', 'product' => $product->load('features.type')]);
+    }
+
+    /**
+     * Permanently remove the specified resource from storage.
+     */
+    public function forceDelete(int $id): JsonResponse
+    {
+        $product = Product::onlyTrashed()->findOrFail($id);
+        $product->forceDelete();
+        return response()->json(['message' => 'Product permanently deleted']);
+    }
 }

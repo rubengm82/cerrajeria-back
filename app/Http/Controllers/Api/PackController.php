@@ -88,4 +88,33 @@ class PackController extends Controller
         $pack->delete();
         return response()->json(['message' => 'Pack deleted successfully']);
     }
+
+    /**
+     * Display a listing of the trashed resources.
+     */
+    public function trashed(): JsonResponse
+    {
+        $packs = Pack::onlyTrashed()->with(['products', 'images'])->get();
+        return response()->json($packs);
+    }
+
+    /**
+     * Restore the specified resource from trash.
+     */
+    public function restore(int $id): JsonResponse
+    {
+        $pack = Pack::onlyTrashed()->findOrFail($id);
+        $pack->restore();
+        return response()->json(['message' => 'Pack restored successfully', 'pack' => $pack]);
+    }
+
+    /**
+     * Permanently remove the specified resource from storage.
+     */
+    public function forceDelete(int $id): JsonResponse
+    {
+        $pack = Pack::onlyTrashed()->findOrFail($id);
+        $pack->forceDelete();
+        return response()->json(['message' => 'Pack permanently deleted']);
+    }
 }

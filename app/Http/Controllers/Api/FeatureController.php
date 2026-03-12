@@ -66,4 +66,33 @@ class FeatureController extends Controller
         $feature->delete();
         return response()->json(['message' => 'Feature deleted successfully']);
     }
+
+    /**
+     * Display a listing of the trashed resources.
+     */
+    public function trashed(): JsonResponse
+    {
+        $features = Feature::onlyTrashed()->with(['type'])->get();
+        return response()->json($features);
+    }
+
+    /**
+     * Restore the specified resource from trash.
+     */
+    public function restore(int $id): JsonResponse
+    {
+        $feature = Feature::onlyTrashed()->findOrFail($id);
+        $feature->restore();
+        return response()->json(['message' => 'Feature restored successfully', 'feature' => $feature]);
+    }
+
+    /**
+     * Permanently remove the specified resource from storage.
+     */
+    public function forceDelete(int $id): JsonResponse
+    {
+        $feature = Feature::onlyTrashed()->findOrFail($id);
+        $feature->forceDelete();
+        return response()->json(['message' => 'Feature permanently deleted']);
+    }
 }
