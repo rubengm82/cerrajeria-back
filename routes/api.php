@@ -50,6 +50,7 @@ Route::post('/custom-solutions', [CustomSolutionController::class, 'store']);
 /* ***************** */
 
 // Rutas de categorías
+Route::get('/categories/important', [CategoryController::class, 'getImportantCategories']);
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/categories', [CategoryController::class, 'index']);
     Route::get('/categories/with-trashed', [CategoryController::class, 'indexWithTrashed']);
@@ -63,6 +64,7 @@ Route::middleware('auth:sanctum')->group(function () {
 });
 
 // Rutas de productos
+Route::get('/products/important', [ProductController::class, 'getImportantProducts']);
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/products', [ProductController::class, 'index']);
     Route::get('/products/with-trashed', [ProductController::class, 'indexWithTrashed']);
@@ -99,6 +101,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/orders/{id}/restore', [OrderController::class, 'restore']);
     Route::delete('/orders/{id}/force', [OrderController::class, 'forceDelete']);
 });
+
 
 // Rutas de imágenes de productos
 Route::middleware('auth:sanctum')->group(function () {

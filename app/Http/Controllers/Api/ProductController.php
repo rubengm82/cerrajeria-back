@@ -100,6 +100,12 @@ class ProductController extends Controller
         return response()->json($product->load('features.type'));
     }
 
+    public function getImportantProducts(): JsonResponse
+    {
+        $importantProducts = Product::where("is_important_to_show", true)->with(["category", "images"])->get();
+        return response()->json($importantProducts);
+    }
+
     /**
      * Remove the specified resource from storage.
      */
