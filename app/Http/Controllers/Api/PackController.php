@@ -23,7 +23,9 @@ class PackController extends Controller
      */
     public function indexWithTrashed(): JsonResponse
     {
-        $packs = Pack::withTrashed()->with(['products', 'images'])->get();
+        $packs = Pack::withTrashed()->with(['products' => function ($query) {
+            $query->withTrashed();
+        }, 'images'])->get();
         return response()->json($packs);
     }
 
@@ -55,7 +57,9 @@ class PackController extends Controller
      */
     public function show(int $id): JsonResponse
     {
-        $pack = Pack::with(['products', 'images'])->findOrFail($id);
+        $pack = Pack::with(['products' => function ($query) {
+            $query->withTrashed();
+        }, 'images'])->findOrFail($id);
         return response()->json($pack);
     }
 
@@ -85,6 +89,13 @@ class PackController extends Controller
         if (array_key_exists('product_ids', $validated)) {
             $pack->products()->sync($validated['product_ids']);
         }
+
+        // Si el pack queda con 0 productos activos, se desactiva automáticamente
+        $activeProductsCount = $pack->products()->count();
+        if ($activeProductsCount === 0 && !$pack->trashed()) {
+            $pack->delete();
+        }
+
         return response()->json($pack);
     }
 
@@ -103,7 +114,9 @@ class PackController extends Controller
      */
     public function trashed(): JsonResponse
     {
-        $packs = Pack::onlyTrashed()->with(['products', 'images'])->get();
+        $packs = Pack::onlyTrashed()->with(['products' => function ($query) {
+            $query->withTrashed();
+        }, 'images'])->get();
         return response()->json($packs);
     }
 

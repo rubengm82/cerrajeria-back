@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Product;
+use App\Models\Pack;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 
@@ -112,7 +113,20 @@ class ProductController extends Controller
     public function destroy(int $id): JsonResponse
     {
         $product = Product::findOrFail($id);
+        
+        // Obtener los packs asociados a este producto
+        $packs = $product->packs()->get();
+        
         $product->delete();
+        
+        // Desactivar packs que queden con 0 productos activos
+        foreach ($packs as $pack) {
+            $activeProductsCount = $pack->products()->count();
+            if ($activeProductsCount === 0 && !$pack->trashed()) {
+                $pack->delete();
+            }
+        }
+        
         return response()->json(['message' => 'Product deleted successfully']);
     }
 
