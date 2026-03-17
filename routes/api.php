@@ -43,19 +43,6 @@ Route::get('/custom-solutions', [CustomSolutionController::class, 'index']);
 Route::get('/custom-solutions/{id}', [CustomSolutionController::class, 'show']);
 Route::post('/custom-solutions', [CustomSolutionController::class, 'store']);
 
-// Rutas de categorías (públicas)
-Route::get('/categories/important', [CategoryController::class, 'getImportantCategories']);
-Route::get('/categories', [CategoryController::class, 'index']);
-Route::get('/categories/{id}', [CategoryController::class, 'show']);
-
-// Rutas de productos (públicas)
-Route::get('/products/important', [ProductController::class, 'getImportantProducts']);
-Route::get('/products', [ProductController::class, 'index']);
-
-// Rutas de packs (públicas)
-Route::get('/packs', [PackController::class, 'index']);
-Route::get('/packs/{id}', [PackController::class, 'show']);
-
 
 
 /* ***************** */
@@ -63,9 +50,12 @@ Route::get('/packs/{id}', [PackController::class, 'show']);
 /* ***************** */
 
 // Rutas de categorías
+Route::get('/categories/important', [CategoryController::class, 'getImportantCategories']);
 Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/categories', [CategoryController::class, 'index']);
     Route::get('/categories/with-trashed', [CategoryController::class, 'indexWithTrashed']);
     Route::post('/categories', [CategoryController::class, 'store']);
+    Route::get('/categories/{id}', [CategoryController::class, 'show']);
     Route::put('/categories/{id}', [CategoryController::class, 'update']);
     Route::delete('/categories/{id}', [CategoryController::class, 'destroy']);
     Route::get('/categories/trashed', [CategoryController::class, 'trashed']);
@@ -74,7 +64,9 @@ Route::middleware('auth:sanctum')->group(function () {
 });
 
 // Rutas de productos
+Route::get('/products/important', [ProductController::class, 'getImportantProducts']);
 Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/products', [ProductController::class, 'index']);
     Route::get('/products/with-trashed', [ProductController::class, 'indexWithTrashed']);
     Route::post('/products', [ProductController::class, 'store']);
     Route::get('/products/{id}', [ProductController::class, 'show']);
@@ -87,8 +79,10 @@ Route::middleware('auth:sanctum')->group(function () {
 
 // Rutas de packs
 Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/packs', [PackController::class, 'index']);
     Route::get('/packs/with-trashed', [PackController::class, 'indexWithTrashed']);
     Route::post('/packs', [PackController::class, 'store']);
+    Route::get('/packs/{id}', [PackController::class, 'show']);
     Route::put('/packs/{id}', [PackController::class, 'update']);
     Route::delete('/packs/{id}', [PackController::class, 'destroy']);
     Route::get('/packs/trashed', [PackController::class, 'trashed']);
