@@ -24,7 +24,9 @@ class FeatureTypeController extends Controller
      */
     public function indexWithTrashed(): JsonResponse
     {
-        $types = FeatureType::withTrashed()->with('features')->get();
+        $types = FeatureType::withTrashed()->with(['features' => function ($query) {
+            $query->withTrashed();
+        }])->get();
         return response()->json($types);
     }
 
@@ -80,7 +82,9 @@ class FeatureTypeController extends Controller
      */
     public function trashed(): JsonResponse
     {
-        $types = FeatureType::onlyTrashed()->with('features')->get();
+        $types = FeatureType::onlyTrashed()->with(['features' => function ($query) {
+            $query->withTrashed();
+        }])->get();
         return response()->json($types);
     }
 
