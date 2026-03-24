@@ -15,9 +15,24 @@ class FeatureTypeController extends Controller
      */
     public function index(): JsonResponse
     {
-        $types = FeatureType::with('features')->get();
+        $types = FeatureType::with('features')->get()->map(function ($type) {
+            // Contar productos únicos que tienen alguna característica de este tipo
+            $productsCount = $type->features()
+                ->with(['products' => function ($query) {
+                    $query->whereNull('products.deleted_at');
+                }])
+                ->get()
+                ->flatMap(fn($feature) => $feature->products)
+                ->unique('id')
+                ->count();
+            
+            $type->products_count = $productsCount;
+            return $type;
+        });
+        
         return response()->json($types);
     }
+
 
     /**
      * Display a listing of the resource with trashed.
