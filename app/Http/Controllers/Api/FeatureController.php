@@ -14,7 +14,13 @@ class FeatureController extends Controller
      */
     public function index(): JsonResponse
     {
-        $features = Feature::with(['type'])->get();
+        $features = Feature::with(['type', 'products' => function ($query) {
+            $query->whereNull('products.deleted_at');
+        }])->get()->map(function ($feature) {
+            $feature->products_count = $feature->products->count();
+            return $feature;
+        });
+        
         return response()->json($features);
     }
 
