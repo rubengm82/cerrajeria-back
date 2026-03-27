@@ -52,12 +52,12 @@ Route::post('/custom-solutions', [CustomSolutionController::class, 'store']);
 // Rutas de categorías - PÚBLICAS
 Route::get('/categories', [CategoryController::class, 'index']);
 Route::get('/categories/important', [CategoryController::class, 'getImportantCategories']);
+Route::get('/categories/{id}', [CategoryController::class, 'show']);
 
 // Rutas de categorías - PROTEGIDAS (solo admin)
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/categories/with-trashed', [CategoryController::class, 'indexWithTrashed']);
     Route::post('/categories', [CategoryController::class, 'store']);
-    Route::get('/categories/{id}', [CategoryController::class, 'show']);
     Route::put('/categories/{id}', [CategoryController::class, 'update']);
     Route::delete('/categories/{id}', [CategoryController::class, 'destroy']);
     Route::get('/categories/trashed', [CategoryController::class, 'trashed']);
@@ -125,9 +125,14 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::delete('/pack-images/{id}', [PackImageController::class, 'destroy']);
 });
 
-// Rutas de tipos de características
+// Rutas de tipos de características - PÚBLICAS
+Route::get('/feature-types', [FeatureTypeController::class, 'index']);
+
+// Rutas de características - PÚBLICAS
+Route::get('/features', [FeatureController::class, 'index']);
+
+// Rutas protegidas de tipos de características
 Route::middleware('auth:sanctum')->group(function () {
-    Route::get('/feature-types', [FeatureTypeController::class, 'index']);
     Route::get('/feature-types/with-trashed', [FeatureTypeController::class, 'indexWithTrashed']);
     Route::post('/feature-types', [FeatureTypeController::class, 'store']);
     Route::get('/feature-types/{id}', [FeatureTypeController::class, 'show']);
@@ -138,9 +143,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::delete('/feature-types/{id}/force', [FeatureTypeController::class, 'forceDelete']);
 });
 
-// Rutas de características
+// Rutas protegidas de características
 Route::middleware('auth:sanctum')->group(function () {
-    Route::get('/features', [FeatureController::class, 'index']);
     Route::get('/features/with-trashed', [FeatureController::class, 'indexWithTrashed']);
     Route::post('/features', [FeatureController::class, 'store']);
     Route::get('/features/{id}', [FeatureController::class, 'show']);

@@ -103,7 +103,10 @@ class ProductController extends Controller
 
     public function getImportantProducts(): JsonResponse
     {
-        $importantProducts = Product::where("is_important_to_show", true)->with(["category", "images"])->get();
+        $importantProducts = Product::where("is_important_to_show", true)
+            ->where("is_active", true)
+            ->with(["category", "images"])
+            ->get();
         return response()->json($importantProducts);
     }
 
