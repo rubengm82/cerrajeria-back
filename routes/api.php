@@ -49,11 +49,6 @@ Route::post('/custom-solutions', [CustomSolutionController::class, 'store']);
 /* Rutas protegidas  */
 /* ***************** */
 
-// Rutas de categorías - PÚBLICAS
-Route::get('/categories', [CategoryController::class, 'index']);
-Route::get('/categories/important', [CategoryController::class, 'getImportantCategories']);
-Route::get('/categories/{id}', [CategoryController::class, 'show']);
-
 // Rutas de categorías - PROTEGIDAS (solo admin)
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/categories/with-trashed', [CategoryController::class, 'indexWithTrashed']);
@@ -64,6 +59,11 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/categories/{id}/restore', [CategoryController::class, 'restore']);
     Route::delete('/categories/{id}/force', [CategoryController::class, 'forceDelete']);
 });
+
+// Rutas de categorías - PÚBLICAS
+Route::get('/categories', [CategoryController::class, 'index']);
+Route::get('/categories/important', [CategoryController::class, 'getImportantCategories']);
+Route::get('/categories/{id}', [CategoryController::class, 'show']);
 
 // Rutas de productos - PÚBLICAS
 Route::get('/products', [ProductController::class, 'index']);
