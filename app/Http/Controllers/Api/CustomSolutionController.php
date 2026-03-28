@@ -20,6 +20,15 @@ class CustomSolutionController extends Controller
     }
 
     /**
+     * Display a listing of the resource with trashed.
+     */
+    public function indexWithTrashed(): JsonResponse
+    {
+        $customSolutions = CustomSolution::withTrashed()->with(['user', 'files'])->get();
+        return response()->json($customSolutions);
+    }
+
+    /**
      * Store a newly created resource in storage.
      */
     public function store(Request $request): JsonResponse
