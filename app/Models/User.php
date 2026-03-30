@@ -66,14 +66,6 @@ class User extends Authenticatable implements MustVerifyEmail
     }
 
     /**
-     * Relación: Un usuario puede tener muchas soluciones personalizadas.
-     */
-    public function customSolutions(): HasMany
-    {
-        return $this->hasMany(CustomSolution::class, 'user_id');
-    }
-
-    /**
      * Send a password reset notification to the user.
      *
      * @param  string  $token

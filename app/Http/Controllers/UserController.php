@@ -46,7 +46,7 @@ class UserController extends Controller
      */
     public function show(int $id): JsonResponse
     {
-        $user = User::with(['orders', 'customSolutions'])->findOrFail($id);
+        $user = User::with('orders')->findOrFail($id);
         return response()->json($user);
     }
 
