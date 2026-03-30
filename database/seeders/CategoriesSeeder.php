@@ -14,17 +14,17 @@ class CategoriesSeeder extends Seeder
     {
         $categories = [
             [
-                'name' => 'Bombines de seguridad',
+                'name' => 'Cilindres',
                 'is_important_to_show' => true,
                 'image' => 'categories/bombines-seguridad.jpg',
             ],
             [
-                'name' => 'Escudos protectores',
+                'name' => 'Escuts',
                 'is_important_to_show' => true,
                 'image' => 'categories/escudos-protectores.jpg',
             ],
             [
-                'name' => 'Accesorios de cerrajeria',
+                'name' => 'Segon Pany',
                 'is_important_to_show' => true,
                 'image' => 'categories/accesorios-cerrajeria.jpg',
             ],
