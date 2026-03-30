@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Models\CustomSolution;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\Auth;
 
 class CustomSolutionController extends Controller
 {
@@ -15,7 +14,7 @@ class CustomSolutionController extends Controller
      */
     public function index(): JsonResponse
     {
-        $customSolutions = CustomSolution::with(['user', 'files'])->get();
+        $customSolutions = CustomSolution::all();
         return response()->json($customSolutions);
     }
 
@@ -24,7 +23,7 @@ class CustomSolutionController extends Controller
      */
     public function indexWithTrashed(): JsonResponse
     {
-        $customSolutions = CustomSolution::withTrashed()->with(['user', 'files'])->get();
+        $customSolutions = CustomSolution::withTrashed()->get();
         return response()->json($customSolutions);
     }
 
@@ -34,20 +33,11 @@ class CustomSolutionController extends Controller
     public function store(Request $request): JsonResponse
     {
         $validated = $request->validate([
-            'user_id' => 'nullable|exists:users,id',
             'email' => 'required|string|email|max:255',
             'phone' => 'required|string|max:20',
             'description' => 'required|string',
             'status' => 'nullable|in:pending,closed',
         ]);
-
-        // Si el usuario está autenticado, guardar su ID automáticamente
-        if (Auth::check()) {
-            $validated['user_id'] = Auth::id();
-        } else {
-            // Si no está autenticado, dejar user_id como null
-            unset($validated['user_id']);
-        }
 
         $customSolution = CustomSolution::create($validated);
         return response()->json($customSolution, 201);
@@ -58,7 +48,7 @@ class CustomSolutionController extends Controller
      */
     public function show(int $id): JsonResponse
     {
-        $customSolution = CustomSolution::with(['user', 'files'])->findOrFail($id);
+        $customSolution = CustomSolution::findOrFail($id);
         return response()->json($customSolution);
     }
 
@@ -70,7 +60,6 @@ class CustomSolutionController extends Controller
         $customSolution = CustomSolution::findOrFail($id);
 
         $validated = $request->validate([
-            'user_id' => 'nullable|exists:users,id',
             'email' => 'sometimes|string|email|max:255',
             'phone' => 'sometimes|string|max:20',
             'description' => 'sometimes|string',
@@ -96,7 +85,7 @@ class CustomSolutionController extends Controller
      */
     public function trashed(): JsonResponse
     {
-        $customSolutions = CustomSolution::onlyTrashed()->with(['user', 'files'])->get();
+        $customSolutions = CustomSolution::onlyTrashed()->get();
         return response()->json($customSolutions);
     }
 

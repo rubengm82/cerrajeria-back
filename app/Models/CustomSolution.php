@@ -12,7 +12,6 @@ class CustomSolution extends Model
     use HasFactory, SoftDeletes;
 
     protected $fillable = [
-        'user_id',
         'email',
         'phone',
         'description',
@@ -23,11 +22,4 @@ class CustomSolution extends Model
         'status' => 'string',
     ];
 
-    /**
-     * Relación: Una solución personalizada puede pertenecer a un usuario.
-     */
-    public function user(): BelongsTo
-    {
-        return $this->belongsTo(User::class, 'user_id');
-    }
 }
