@@ -682,12 +682,7 @@ class ProductsSeeder extends Seeder
             $featureValues = $productData['feature_values'] ?? [];
             unset($productData['feature_values']);
 
-            // Si el código está vacío, generar uno basándose en el nombre
-            if (empty($productData['code'])) {
-                $productData['code'] = $this->generateCode($productData['name']);
-            }
-
-            // Usar name como clave única porque algunos productos tienen code vacío
+            // Usar name como clave única
             $product = Product::updateOrCreate(
                 ['name' => $productData['name']],
                 $productData
@@ -715,19 +710,5 @@ class ProductsSeeder extends Seeder
             ->toArray();
 
         return $featureTypes;
-    }
-
-    /**
-     * Generar un código único basado en el nombre del producto.
-     */
-    private function generateCode(string $name): string
-    {
-        // Convertir el nombre a un código slugificado
-        $code = strtolower($name);
-        $code = preg_replace('/[^a-z0-9]/', '-', $code);
-        $code = preg_replace('/-+/', '-', $code);
-        $code = trim($code, '-');
-        // Agregar un sufijo único para evitar duplicados
-        return $code . '-' . uniqid();
     }
 }
