@@ -38,9 +38,8 @@ Route::post('/reset-password', [PasswordResetController::class, 'resetPassword']
 Route::post('/email/verification-notification', [VerificationController::class, 'sendVerificationEmail']);
 Route::get('/email/verify/{id}/{hash}', [VerificationController::class, 'verify'])->name('verification.verify');
 
-// Rutas de soluciones personalizadas
+// Rutas publicas de soluciones personalizadas
 Route::get('/custom-solutions', [CustomSolutionController::class, 'index']);
-Route::get('/custom-solutions/{id}', [CustomSolutionController::class, 'show']);
 Route::post('/custom-solutions', [CustomSolutionController::class, 'store']);
 
 
@@ -177,9 +176,11 @@ Route::middleware('auth:sanctum')->group(function () {
 
 // Rutas de soluciones personalizadas (protegidas - solo admin)
 Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/custom-solutions/with-trashed', [CustomSolutionController::class, 'indexWithTrashed']);
+    Route::get('/custom-solutions/trashed', [CustomSolutionController::class, 'trashed']);
+    Route::get('/custom-solutions/{id}', [CustomSolutionController::class, 'show']);
     Route::put('/custom-solutions/{id}', [CustomSolutionController::class, 'update']);
     Route::delete('/custom-solutions/{id}', [CustomSolutionController::class, 'destroy']);
-    Route::get('/custom-solutions/trashed', [CustomSolutionController::class, 'trashed']);
     Route::post('/custom-solutions/{id}/restore', [CustomSolutionController::class, 'restore']);
     Route::delete('/custom-solutions/{id}/force', [CustomSolutionController::class, 'forceDelete']);
 });
