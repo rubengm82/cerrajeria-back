@@ -14,7 +14,6 @@ use App\Http\Controllers\Api\ProductImageController;
 use App\Http\Controllers\Api\PackImageController;
 use App\Http\Controllers\Api\FeatureTypeController;
 use App\Http\Controllers\Api\FeatureController;
-use App\Http\Controllers\Api\CustomSolutionFileController;
 
 
 /* *************** */
@@ -163,15 +162,6 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/users/{id}', [UserController::class, 'update']);
     Route::delete('/users/{id}', [UserController::class, 'destroy']);
     Route::post('/logout', [AuthController::class, 'logout']);
-});
-
-// Rutas de archivos de soluciones personalizadas (protegidas)
-Route::middleware('auth:sanctum')->group(function () {
-    Route::get('/custom-solution-files', [CustomSolutionFileController::class, 'index']);
-    Route::post('/custom-solution-files', [CustomSolutionFileController::class, 'store']);
-    Route::get('/custom-solution-files/{id}', [CustomSolutionFileController::class, 'show']);
-    Route::put('/custom-solution-files/{id}', [CustomSolutionFileController::class, 'update']);
-    Route::delete('/custom-solution-files/{id}', [CustomSolutionFileController::class, 'destroy']);
 });
 
 // Rutas de soluciones personalizadas (protegidas - solo admin)
