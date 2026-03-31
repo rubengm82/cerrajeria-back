@@ -104,7 +104,7 @@ class CustomSolutionController extends Controller
      */
     public function forceDelete(int $id): JsonResponse
     {
-        $customSolution = CustomSolution::onlyTrashed()->findOrFail($id);
+        $customSolution = CustomSolution::withTrashed()->findOrFail($id);
         $customSolution->forceDelete();
         return response()->json(['message' => 'Custom solution permanently deleted']);
     }
