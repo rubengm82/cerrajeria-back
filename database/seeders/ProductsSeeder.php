@@ -38,7 +38,7 @@ class ProductsSeeder extends Seeder
                 'is_installable' => true,
                 'is_important_to_show' => true,
                 'installation_price' => 35.00,
-                'extra_keys' => 0,
+                'price_keys' => 0,
                 'is_active' => true,
                 'feature_values' => [
                     $features['Marca']['Securemme'],
@@ -62,7 +62,7 @@ class ProductsSeeder extends Seeder
                 'is_installable' => true,
                 'is_important_to_show' => true,
                 'installation_price' => 35.00,
-                'extra_keys' => 0,
+                'price_keys' => 0,
                 'is_active' => true,
                 'feature_values' => [
                     $features['Marca']['Securemme'],
@@ -86,7 +86,7 @@ class ProductsSeeder extends Seeder
                 'is_installable' => true,
                 'is_important_to_show' => true,
                 'installation_price' => 35.00,
-                'extra_keys' => 0,
+                'price_keys' => 0,
                 'is_active' => true,
                 'feature_values' => [
                     $features['Marca']['Securemme'],
@@ -110,7 +110,7 @@ class ProductsSeeder extends Seeder
                 'is_installable' => true,
                 'is_important_to_show' => true,
                 'installation_price' => 35.00,
-                'extra_keys' => 0,
+                'price_keys' => 0,
                 'is_active' => true,
                 'feature_values' => [
                     $features['Marca']['Securemme'],
@@ -134,7 +134,7 @@ class ProductsSeeder extends Seeder
                 'is_installable' => true,
                 'is_important_to_show' => true,
                 'installation_price' => 35.00,
-                'extra_keys' => 0,
+                'price_keys' => 0,
                 'is_active' => true,
                 'feature_values' => [
                     $features['Marca']['Securemme'],
@@ -158,7 +158,7 @@ class ProductsSeeder extends Seeder
                 'is_installable' => true,
                 'is_important_to_show' => true,
                 'installation_price' => 35.00,
-                'extra_keys' => 0,
+                'price_keys' => 0,
                 'is_active' => true,
                 'feature_values' => [
                     $features['Marca']['Securemme'],
@@ -182,7 +182,7 @@ class ProductsSeeder extends Seeder
                 'is_installable' => true,
                 'is_important_to_show' => true,
                 'installation_price' => 35.00,
-                'extra_keys' => 0,
+                'price_keys' => 0,
                 'is_active' => true,
                 'feature_values' => [
                     $features['Marca']['Securemme'],
@@ -206,7 +206,7 @@ class ProductsSeeder extends Seeder
                 'is_installable' => true,
                 'is_important_to_show' => true,
                 'installation_price' => 35.00,
-                'extra_keys' => 0,
+                'price_keys' => 0,
                 'is_active' => true,
                 'feature_values' => [
                     $features['Marca']['Securemme'],
@@ -231,7 +231,7 @@ class ProductsSeeder extends Seeder
                 'is_installable' => true,
                 'is_important_to_show' => true,
                 'installation_price' => 35.00,
-                'extra_keys' => 0,
+                'price_keys' => 0,
                 'is_active' => true,
                 'feature_values' => [
                     $features['Marca']['M&C'],
@@ -255,7 +255,7 @@ class ProductsSeeder extends Seeder
                 'is_installable' => true,
                 'is_important_to_show' => true,
                 'installation_price' => 35.00,
-                'extra_keys' => 0,
+                'price_keys' => 0,
                 'is_active' => true,
                 'feature_values' => [
                     $features['Marca']['M&C'],
@@ -280,7 +280,7 @@ class ProductsSeeder extends Seeder
                 'is_installable' => true,
                 'is_important_to_show' => true,
                 'installation_price' => 35.00,
-                'extra_keys' => 0,
+                'price_keys' => 0,
                 'is_active' => true,
                 'feature_values' => [
                     $features['Marca']['Keso'],
@@ -304,7 +304,7 @@ class ProductsSeeder extends Seeder
                 'is_installable' => true,
                 'is_important_to_show' => true,
                 'installation_price' => 35.00,
-                'extra_keys' => 0,
+                'price_keys' => 0,
                 'is_active' => true,
                 'feature_values' => [
                     $features['Marca']['Keso'],
@@ -329,7 +329,7 @@ class ProductsSeeder extends Seeder
                 'is_installable' => true,
                 'is_important_to_show' => true,
                 'installation_price' => 25.00,
-                'extra_keys' => 0,
+                'price_keys' => 0,
                 'is_active' => true,
                 'feature_values' => [
                     $features['Marca']['Abus'],
@@ -348,7 +348,7 @@ class ProductsSeeder extends Seeder
                 'is_installable' => true,
                 'is_important_to_show' => true,
                 'installation_price' => 25.00,
-                'extra_keys' => 0,
+                'price_keys' => 0,
                 'is_active' => true,
                 'feature_values' => [
                     $features['Marca']['Abus'],
@@ -368,7 +368,7 @@ class ProductsSeeder extends Seeder
                 'is_installable' => true,
                 'is_important_to_show' => true,
                 'installation_price' => 25.00,
-                'extra_keys' => 0,
+                'price_keys' => 0,
                 'is_active' => true,
                 'feature_values' => [
                     $features['Marca']['DMC'],
@@ -387,7 +387,7 @@ class ProductsSeeder extends Seeder
                 'is_installable' => true,
                 'is_important_to_show' => true,
                 'installation_price' => 25.00,
-                'extra_keys' => 0,
+                'price_keys' => 0,
                 'is_active' => true,
                 'feature_values' => [
                     $features['Marca']['DMC'],
@@ -407,7 +407,7 @@ class ProductsSeeder extends Seeder
                 'is_installable' => true,
                 'is_important_to_show' => true,
                 'installation_price' => 25.00,
-                'extra_keys' => 0,
+                'price_keys' => 0,
                 'is_active' => true,
                 'feature_values' => [
                     $features['Marca']['DMC'],
@@ -426,7 +426,7 @@ class ProductsSeeder extends Seeder
                 'is_installable' => true,
                 'is_important_to_show' => true,
                 'installation_price' => 25.00,
-                'extra_keys' => 0,
+                'price_keys' => 0,
                 'is_active' => true,
                 'feature_values' => [
                     $features['Marca']['DMC'],
@@ -446,7 +446,7 @@ class ProductsSeeder extends Seeder
                 'is_installable' => true,
                 'is_important_to_show' => true,
                 'installation_price' => 25.00,
-                'extra_keys' => 0,
+                'price_keys' => 0,
                 'is_active' => true,
                 'feature_values' => [
                     $features['Marca']['Disec'],
@@ -465,7 +465,7 @@ class ProductsSeeder extends Seeder
                 'is_installable' => true,
                 'is_important_to_show' => true,
                 'installation_price' => 25.00,
-                'extra_keys' => 0,
+                'price_keys' => 0,
                 'is_active' => true,
                 'feature_values' => [
                     $features['Marca']['Disec'],
@@ -484,7 +484,7 @@ class ProductsSeeder extends Seeder
                 'is_installable' => true,
                 'is_important_to_show' => true,
                 'installation_price' => 25.00,
-                'extra_keys' => 0,
+                'price_keys' => 0,
                 'is_active' => true,
                 'feature_values' => [
                     $features['Marca']['Disec'],
@@ -503,7 +503,7 @@ class ProductsSeeder extends Seeder
                 'is_installable' => true,
                 'is_important_to_show' => true,
                 'installation_price' => 25.00,
-                'extra_keys' => 0,
+                'price_keys' => 0,
                 'is_active' => true,
                 'feature_values' => [
                     $features['Marca']['Disec'],
@@ -522,7 +522,7 @@ class ProductsSeeder extends Seeder
                 'is_installable' => true,
                 'is_important_to_show' => true,
                 'installation_price' => 25.00,
-                'extra_keys' => 0,
+                'price_keys' => 0,
                 'is_active' => true,
                 'feature_values' => [
                     $features['Marca']['Disec'],
@@ -541,7 +541,7 @@ class ProductsSeeder extends Seeder
                 'is_installable' => true,
                 'is_important_to_show' => true,
                 'installation_price' => 25.00,
-                'extra_keys' => 0,
+                'price_keys' => 0,
                 'is_active' => true,
                 'feature_values' => [
                     $features['Marca']['Disec'],
@@ -560,7 +560,7 @@ class ProductsSeeder extends Seeder
                 'is_installable' => true,
                 'is_important_to_show' => true,
                 'installation_price' => 25.00,
-                'extra_keys' => 0,
+                'price_keys' => 0,
                 'is_active' => true,
                 'feature_values' => [
                     $features['Marca']['Disec'],
@@ -581,7 +581,7 @@ class ProductsSeeder extends Seeder
                 'is_installable' => true,
                 'is_important_to_show' => true,
                 'installation_price' => 25.00,
-                'extra_keys' => 0,
+                'price_keys' => 0,
                 'is_active' => true,
                 'feature_values' => [
                     $features['Marca']['Disec'],
@@ -602,7 +602,7 @@ class ProductsSeeder extends Seeder
                 'is_installable' => true,
                 'is_important_to_show' => true,
                 'installation_price' => 25.00,
-                'extra_keys' => 0,
+                'price_keys' => 0,
                 'is_active' => true,
                 'feature_values' => [
                     $features['Marca']['Disec'],
@@ -623,7 +623,7 @@ class ProductsSeeder extends Seeder
                 'is_installable' => true,
                 'is_important_to_show' => true,
                 'installation_price' => 25.00,
-                'extra_keys' => 0,
+                'price_keys' => 0,
                 'is_active' => true,
                 'feature_values' => [
                     $features['Marca']['Disec'],
@@ -645,7 +645,7 @@ class ProductsSeeder extends Seeder
                 'is_installable' => true,
                 'is_important_to_show' => true,
                 'installation_price' => 50.00,
-                'extra_keys' => 0,
+                'price_keys' => 0,
                 'is_active' => true,
                 'feature_values' => [
                     $features['Marca']['M&C'],
@@ -666,7 +666,7 @@ class ProductsSeeder extends Seeder
                 'is_installable' => true,
                 'is_important_to_show' => true,
                 'installation_price' => 50.00,
-                'extra_keys' => 0,
+                'price_keys' => 0,
                 'is_active' => true,
                 'feature_values' => [
                     $features['Marca']['M&C'],
@@ -689,7 +689,7 @@ class ProductsSeeder extends Seeder
             );
 
             // Adjuntar las características al producto
-            if (!empty($featureValues)) {
+            if (! empty($featureValues)) {
                 $product->features()->sync($featureValues);
             }
         }

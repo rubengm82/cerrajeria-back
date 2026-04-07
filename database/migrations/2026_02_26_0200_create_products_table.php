@@ -23,7 +23,7 @@ return new class extends Migration
             $table->boolean('is_installable')->default(false);
             $table->boolean('is_important_to_show')->default(false);
             $table->decimal('installation_price', 10, 2)->nullable();
-            $table->integer('extra_keys')->nullable();
+            $table->decimal('price_keys', 10, 2)->nullable();
             $table->boolean('is_active')->default(true);
             $table->timestamps();
             $table->softDeletes();

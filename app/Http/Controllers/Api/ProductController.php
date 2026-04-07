@@ -4,9 +4,8 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Product;
-use App\Models\Pack;
-use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 
 class ProductController extends Controller
 {
@@ -16,6 +15,7 @@ class ProductController extends Controller
     public function index(): JsonResponse
     {
         $products = Product::with(['category', 'images', 'features.type'])->get();
+
         return response()->json($products);
     }
 
@@ -25,6 +25,7 @@ class ProductController extends Controller
     public function indexWithTrashed(): JsonResponse
     {
         $products = Product::withTrashed()->with(['category', 'images', 'features.type'])->get();
+
         return response()->json($products);
     }
 
@@ -44,7 +45,7 @@ class ProductController extends Controller
             'is_installable' => 'nullable|boolean',
             'is_important_to_show' => 'nullable|boolean',
             'installation_price' => 'nullable|numeric|min:0',
-            'extra_keys' => 'nullable|integer|min:0',
+            'price_keys' => 'nullable|numeric|min:0',
             'is_active' => 'nullable|boolean',
             'feature_ids' => 'nullable|array',
             'feature_ids.*' => 'exists:features,id',
@@ -52,7 +53,7 @@ class ProductController extends Controller
 
         $product = Product::create($validated);
 
-        if (!empty($validated['feature_ids'])) {
+        if (! empty($validated['feature_ids'])) {
             $product->features()->attach($validated['feature_ids']);
         }
 
@@ -65,6 +66,7 @@ class ProductController extends Controller
     public function show(int $id): JsonResponse
     {
         $product = Product::with(['category', 'images', 'features.type', 'packs', 'orders'])->findOrFail($id);
+
         return response()->json($product);
     }
 
@@ -80,13 +82,13 @@ class ProductController extends Controller
             'description' => 'nullable|string',
             'price' => 'sometimes|numeric|min:0',
             'stock' => 'sometimes|integer|min:0',
-            'code' => 'sometimes|string|max:100|unique:products,code,' . $product->id,
+            'code' => 'sometimes|string|max:100|unique:products,code,'.$product->id,
             'discount' => 'nullable|numeric|min:0|max:100',
             'category_id' => 'sometimes|exists:categories,id',
             'is_installable' => 'nullable|boolean',
             'is_important_to_show' => 'nullable|boolean',
             'installation_price' => 'nullable|numeric|min:0',
-            'extra_keys' => 'nullable|integer|min:0',
+            'price_keys' => 'nullable|numeric|min:0',
             'is_active' => 'nullable|boolean',
             'feature_ids' => 'nullable|array',
             'feature_ids.*' => 'exists:features,id',
@@ -103,10 +105,11 @@ class ProductController extends Controller
 
     public function getImportantProducts(): JsonResponse
     {
-        $importantProducts = Product::where("is_important_to_show", true)
-            ->where("is_active", true)
-            ->with(["category", "images", "features.type"])
+        $importantProducts = Product::where('is_important_to_show', true)
+            ->where('is_active', true)
+            ->with(['category', 'images', 'features.type'])
             ->get();
+
         return response()->json($importantProducts);
     }
 
@@ -116,20 +119,20 @@ class ProductController extends Controller
     public function destroy(int $id): JsonResponse
     {
         $product = Product::findOrFail($id);
-        
+
         // Obtener los packs asociados a este producto
         $packs = $product->packs()->get();
-        
+
         $product->delete();
-        
+
         // Desactivar packs que queden con 0 productos activos
         foreach ($packs as $pack) {
             $activeProductsCount = $pack->products()->count();
-            if ($activeProductsCount === 0 && !$pack->trashed()) {
+            if ($activeProductsCount === 0 && ! $pack->trashed()) {
                 $pack->delete();
             }
         }
-        
+
         return response()->json(['message' => 'Product deleted successfully']);
     }
 
@@ -139,6 +142,7 @@ class ProductController extends Controller
     public function trashed(): JsonResponse
     {
         $products = Product::onlyTrashed()->with(['category', 'images', 'features.type'])->get();
+
         return response()->json($products);
     }
 
@@ -149,6 +153,7 @@ class ProductController extends Controller
     {
         $product = Product::onlyTrashed()->findOrFail($id);
         $product->restore();
+
         return response()->json(['message' => 'Product restored successfully', 'product' => $product->load('features.type')]);
     }
 
@@ -159,6 +164,7 @@ class ProductController extends Controller
     {
         $product = Product::onlyTrashed()->findOrFail($id);
         $product->forceDelete();
+
         return response()->json(['message' => 'Product permanently deleted']);
     }
 }
