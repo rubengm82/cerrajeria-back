@@ -105,7 +105,7 @@ class ProductController extends Controller
     {
         $importantProducts = Product::where("is_important_to_show", true)
             ->where("is_active", true)
-            ->with(["category", "images"])
+            ->with(["category", "images", "features.type"])
             ->get();
         return response()->json($importantProducts);
     }
