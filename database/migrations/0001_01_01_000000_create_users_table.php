@@ -16,11 +16,11 @@ return new class extends Migration
             $table->string('name');
             $table->string('last_name_one');
             $table->string('last_name_second')->nullable();
-            $table->string('dni')->unique();
-            $table->string('phone');
+            $table->string('dni')->unique()->nullable();
+            $table->string('phone')->nullable();
             $table->string('email')->unique();
-            $table->string('address');
-            $table->string('zip_code');
+            $table->string('address')->nullable();
+            $table->string('zip_code')->nullable();
             $table->string('password');
             $table->enum('role', ['admin', 'user'])->default('user');
             $table->timestamp('email_verified_at')->nullable();
