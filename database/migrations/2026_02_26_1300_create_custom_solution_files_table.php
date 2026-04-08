@@ -3,7 +3,6 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
-use App\Models\CustomSolution;
 
 return new class extends Migration
 {
@@ -12,14 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('custom_solutions', function (Blueprint $table) {
+        Schema::create('custom_solution_files', function (Blueprint $table) {
             $table->id();
-            $table->string('email');
-            $table->string('phone');
-            $table->text('description');
-            $table->enum('status', CustomSolution::STATUSES)->default(CustomSolution::STATUS_PENDING);
+            $table->foreignId('custom_solution_id')->constrained('custom_solutions')->onDelete('cascade');
+            $table->string('file_path');
             $table->timestamps();
-            $table->softDeletes();
         });
     }
 
@@ -28,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('custom_solutions');
+        Schema::dropIfExists('custom_solution_files');
     }
 };

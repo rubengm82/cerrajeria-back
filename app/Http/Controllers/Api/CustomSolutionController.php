@@ -36,11 +36,27 @@ class CustomSolutionController extends Controller
             'email' => 'required|string|email|max:255',
             'phone' => 'required|string|max:20',
             'description' => 'required|string',
-            'status' => 'nullable|in:pending,closed',
+            'status' => 'nullable|in:' . implode(',', CustomSolution::STATUSES),
+            'images' => 'nullable|array|max:3',
+            'images.*' => 'image|max:2048',
         ]);
 
-        $customSolution = CustomSolution::create($validated);
-        return response()->json($customSolution, 201);
+        $customSolution = CustomSolution::create([
+            'email' => $validated['email'],
+            'phone' => $validated['phone'],
+            'description' => $validated['description'],
+            'status' => $validated['status'] ?? CustomSolution::STATUS_PENDING,
+        ]);
+
+        foreach ($request->file('images', []) as $image) {
+            $path = $image->store('custom-solutions', 'public');
+
+            $customSolution->files()->create([
+                'file_path' => $path,
+            ]);
+        }
+
+        return response()->json($customSolution->load('files'), 201);
     }
 
     /**
@@ -48,7 +64,7 @@ class CustomSolutionController extends Controller
      */
     public function show(int $id): JsonResponse
     {
-        $customSolution = CustomSolution::findOrFail($id);
+        $customSolution = CustomSolution::with(['files'])->findOrFail($id);
         return response()->json($customSolution);
     }
 
@@ -63,7 +79,7 @@ class CustomSolutionController extends Controller
             'email' => 'sometimes|string|email|max:255',
             'phone' => 'sometimes|string|max:20',
             'description' => 'sometimes|string',
-            'status' => 'sometimes|in:pending,closed',
+            'status' => 'sometimes|in:' . implode(',', CustomSolution::STATUSES),
         ]);
 
         $customSolution->update($validated);
