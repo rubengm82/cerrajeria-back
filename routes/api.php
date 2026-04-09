@@ -9,6 +9,7 @@ use App\Http\Controllers\Api\CategoryController;
 use App\Http\Controllers\Api\ProductController;
 use App\Http\Controllers\Api\PackController;
 use App\Http\Controllers\Api\OrderController;
+use App\Http\Controllers\Api\ReportController;
 use App\Http\Controllers\Api\CustomSolutionController;
 use App\Http\Controllers\Api\ProductImageController;
 use App\Http\Controllers\Api\PackImageController;
@@ -96,6 +97,7 @@ Route::get('/packs/{id}', [PackController::class, 'show']);
 
 // Rutas de pedidos
 Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/reports/summary', [ReportController::class, 'summary']);
     Route::get('/orders', [OrderController::class, 'index']);
     Route::post('/orders', [OrderController::class, 'store']);
     Route::get('/orders/{id}', [OrderController::class, 'show']);
