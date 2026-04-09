@@ -18,11 +18,7 @@ class AuthController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'last_name_one' => 'required|string|max:255',
-            'dni' => 'required|string|unique:users',
-            'phone' => 'required|string|max:20',
             'email' => 'required|email|unique:users',
-            'address' => 'required|string|max:255',
-            'zip_code' => 'required|string|max:10',
             'password' => 'required|string|min:8|confirmed',
         ]);
 
@@ -30,11 +26,7 @@ class AuthController extends Controller
             'name' => $request->name,
             'last_name_one' => $request->last_name_one,
             'last_name_second' => $request->last_name_second,
-            'dni' => $request->dni,
-            'phone' => $request->phone,
             'email' => $request->email,
-            'address' => $request->address,
-            'zip_code' => $request->zip_code,
             'password' => $request->password,
             'role' => 'user',
         ]);
