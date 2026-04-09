@@ -14,7 +14,18 @@ class OrderController extends Controller
      */
     public function index(): JsonResponse
     {
-        $orders = Order::with(['user', 'products'])->get();
+        $user = auth()->user();
+
+        // Si el usuario es admin, mostrar todas las órdenes
+        if ($user->role === 'admin' || $user->role === 1) {
+            $orders = Order::with(['user', 'products'])->get();
+        } else {
+            // Si es usuario normal, mostrar solo sus órdenes
+            $orders = Order::with(['user', 'products'])
+                          ->where('user_id', $user->id)
+                          ->get();
+        }
+
         return response()->json($orders);
     }
 

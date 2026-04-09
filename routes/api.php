@@ -14,6 +14,7 @@ use App\Http\Controllers\Api\ProductImageController;
 use App\Http\Controllers\Api\PackImageController;
 use App\Http\Controllers\Api\FeatureTypeController;
 use App\Http\Controllers\Api\FeatureController;
+use App\Http\Controllers\InvoiceController;
 
 
 /* *************** */
@@ -176,3 +177,6 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/custom-solutions/{id}/restore', [CustomSolutionController::class, 'restore']);
     Route::delete('/custom-solutions/{id}/force', [CustomSolutionController::class, 'forceDelete']);
 });
+
+// Ruta para descargar facturas (protegida)
+Route::middleware('auth:sanctum')->get('/invoices/{id}/download', [InvoiceController::class, 'download']);
