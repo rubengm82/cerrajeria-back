@@ -36,7 +36,6 @@ class InvoiceController extends Controller
 
     private function prepareInvoiceData($order)
     {
-        // Calculate totals
         $subtotal = 0;
         $items = [];
 
@@ -54,27 +53,31 @@ class InvoiceController extends Controller
             ];
         }
 
-        $taxRate = 21; // IVA España
+        $taxRate = 21;
         $taxAmount = $subtotal * ($taxRate / 100);
-        $total = $subtotal + $taxAmount;
 
         return (object) [
             'number' => 'INV-' . str_pad($order->id, 6, '0', STR_PAD_LEFT),
             'date' => $order->created_at,
             'due_date' => $order->created_at->addDays(30),
+
             'customer' => (object) [
                 'name' => $order->user->name,
+                'last_name_one' => $order->user->last_name_one ?? '',
+                'last_name_second' => $order->user->last_name_second ?? '',
+                'dni' => $order->user->dni ?? '',
                 'address' => $order->shipping_address ?? $order->user->address ?? '',
+                'zip_code' => $order->user->postal_code ?? '',
                 'city' => $order->user->city ?? '',
-                'postal_code' => $order->user->postal_code ?? '',
                 'country' => $order->user->country ?? 'España',
                 'email' => $order->user->email,
             ],
+
             'items' => $items,
             'subtotal' => $subtotal,
             'tax_rate' => $taxRate,
             'tax_amount' => $taxAmount,
-            'total' => $total,
+            'total' => $subtotal + $taxAmount,
         ];
     }
 }

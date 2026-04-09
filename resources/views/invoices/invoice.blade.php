@@ -31,10 +31,6 @@ body {
     margin-bottom: 20px;
 }
 
-.header-table td {
-    vertical-align: top;
-}
-
 .company-name {
     font-size: 18px;
     font-weight: bold;
@@ -53,14 +49,10 @@ body {
     color: #2c3e50;
 }
 
-/* BLOQUES INFO */
+/* INFO */
 .info-table {
     width: 100%;
     margin-bottom: 20px;
-}
-
-.info-table td {
-    vertical-align: top;
 }
 
 .section-title {
@@ -76,7 +68,6 @@ body {
 /* META */
 .meta-table {
     width: 100%;
-    text-align: right;
     font-size: 11px;
 }
 
@@ -88,7 +79,7 @@ body {
     font-weight: bold;
 }
 
-/* TABLA ITEMS */
+/* ITEMS */
 .items-table {
     width: 100%;
     border-collapse: collapse;
@@ -102,6 +93,7 @@ body {
     font-size: 10px;
     text-align: right;
 }
+
 .items-table th:first-child {
     text-align: left;
 }
@@ -124,20 +116,26 @@ body {
     border: 1px solid #ddd;
     padding: 10px;
     background: #f9f9f9;
+    border-collapse: collapse;
 }
 
-.totals div {
-    display: flex;
-    justify-content: space-between;
+.totals td {
+    padding: 5px;
     font-size: 11px;
-    margin-bottom: 5px;
+}
+
+.totals .label {
+    text-align: left;
+}
+
+.totals .value {
+    text-align: right;
 }
 
 .totals .total {
     font-weight: bold;
     font-size: 14px;
     border-top: 2px solid #333;
-    padding-top: 8px;
 }
 
 /* FOOTER */
@@ -161,9 +159,9 @@ body {
             <td width="60%">
                 <div class="company-name">Serralleria Solidària</div>
                 <div class="company-details">
-                    Carrer d'Atenes, 27,<br>
+                    Carrer d'Atenes, 27<br>
                     Barcelona, Sarrià-Sant Gervasi, 08006<br>
-                    Espanya, Catalunya<br>
+                    España<br>
                     Tel: +34 644 11 18 27<br>
                     empresa@serralleriasolidaria.cat
                 </div>
@@ -180,11 +178,11 @@ body {
             <td width="50%">
                 <div class="section-title">Facturar a:</div>
                 <div class="customer-info">
-                    {{ $invoice->customer->name }}<br>
+                    {{ $invoice->customer->name }} {{ $invoice->customer->last_name_one }} {{ $invoice->customer->last_name_second }} {{ $invoice->customer->zip_code }}<br>
                     {{ $invoice->customer->address }}<br>
-                    {{ $invoice->customer->city }}, {{ $invoice->customer->postal_code }}<br>
                     {{ $invoice->customer->country }}<br>
-                    {{ $invoice->customer->email }}
+                    DNI: {{ $invoice->customer->dni }}<br>
+                    E-Mail: {{ $invoice->customer->email }}
                 </div>
             </td>
             <td width="50%">
@@ -229,24 +227,24 @@ body {
     </table>
 
     <!-- TOTALES -->
-    <div class="totals">
-        <div>
-            <span>Subtotal:</span>
-            <span>{{ number_format($invoice->subtotal, 2, ',', '.') }} €</span>
-        </div>
+    <table class="totals">
+        <tr>
+            <td class="label">Subtotal:</td>
+            <td class="value">{{ number_format($invoice->subtotal, 2, ',', '.') }} €</td>
+        </tr>
 
         @if($invoice->tax_rate > 0)
-        <div>
-            <span>IVA ({{ $invoice->tax_rate }}%):</span>
-            <span>{{ number_format($invoice->tax_amount, 2, ',', '.') }} €</span>
-        </div>
+        <tr>
+            <td class="label">IVA ({{ $invoice->tax_rate }}%):</td>
+            <td class="value">{{ number_format($invoice->tax_amount, 2, ',', '.') }} €</td>
+        </tr>
         @endif
 
-        <div class="total">
-            <span>Total:</span>
-            <span>{{ number_format($invoice->total, 2, ',', '.') }} €</span>
-        </div>
-    </div>
+        <tr class="total">
+            <td class="label"><strong>Total:</strong></td>
+            <td class="value"><strong>{{ number_format($invoice->total, 2, ',', '.') }} €</strong></td>
+        </tr>
+    </table>
 
     <!-- FOOTER -->
     <div class="footer">
