@@ -79,18 +79,20 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::delete('/products/{id}/force', [ProductController::class, 'forceDelete']);
 });
 
-// Rutas de packs
+// Rutas de packs - PÚBLICAS
+Route::get('/packs', [PackController::class, 'index']);
+
+// Rutas de packs - PROTEGIDAS (solo admin)
 Route::middleware('auth:sanctum')->group(function () {
-    Route::get('/packs', [PackController::class, 'index']);
     Route::get('/packs/with-trashed', [PackController::class, 'indexWithTrashed']);
     Route::post('/packs', [PackController::class, 'store']);
-    Route::get('/packs/{id}', [PackController::class, 'show']);
     Route::put('/packs/{id}', [PackController::class, 'update']);
     Route::delete('/packs/{id}', [PackController::class, 'destroy']);
     Route::get('/packs/trashed', [PackController::class, 'trashed']);
     Route::post('/packs/{id}/restore', [PackController::class, 'restore']);
     Route::delete('/packs/{id}/force', [PackController::class, 'forceDelete']);
 });
+Route::get('/packs/{id}', [PackController::class, 'show']);
 
 // Rutas de pedidos
 Route::middleware('auth:sanctum')->group(function () {
