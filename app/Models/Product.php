@@ -7,7 +7,6 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Product extends Model
@@ -25,7 +24,7 @@ class Product extends Model
         'is_installable',
         'is_important_to_show',
         'installation_price',
-        'extra_keys',
+        'price_keys',
         'is_active',
     ];
 
@@ -33,6 +32,7 @@ class Product extends Model
         'price' => 'decimal:2',
         'discount' => 'decimal:2',
         'installation_price' => 'decimal:2',
+        'price_keys' => 'decimal:2',
         'is_installable' => 'boolean',
         'is_important_to_show' => 'boolean',
         'is_active' => 'boolean',
@@ -60,8 +60,8 @@ class Product extends Model
     public function orders(): BelongsToMany
     {
         return $this->belongsToMany(Order::class, 'order_products')
-                    ->withPivot('quantity')
-                    ->withTimestamps();
+            ->withPivot('quantity')
+            ->withTimestamps();
     }
 
     /**
@@ -70,7 +70,7 @@ class Product extends Model
     public function packs(): BelongsToMany
     {
         return $this->belongsToMany(Pack::class, 'pack_products', 'products_id', 'pack_id')
-                    ->withTimestamps();
+            ->withTimestamps();
     }
 
     /**
@@ -79,6 +79,6 @@ class Product extends Model
     public function features(): BelongsToMany
     {
         return $this->belongsToMany(Feature::class, 'product_features')
-                    ->withTimestamps();
+            ->withTimestamps();
     }
 }
