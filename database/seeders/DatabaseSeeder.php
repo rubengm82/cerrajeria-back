@@ -20,6 +20,7 @@ class DatabaseSeeder extends Seeder
             FeatureTypesSeeder::class,
             FeaturesSeeder::class,
             ProductsSeeder::class,
+            PacksSeeder::class,
             OrdersSeeder::class,
             OrderProductsSeeder::class,
         ]);
