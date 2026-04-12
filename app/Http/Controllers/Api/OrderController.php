@@ -50,6 +50,22 @@ class OrderController extends Controller
     }
 
     /**
+     * Display the authenticated user's current cart.
+     */
+    public function cart(): JsonResponse
+    {
+        $user = auth()->user();
+
+        $order = Order::with(['products.category', 'products.images'])
+            ->where('user_id', $user->id)
+            ->where('status', 'in_cart')
+            ->latest()
+            ->first();
+
+        return response()->json($order);
+    }
+
+    /**
      * Store a newly created resource in storage.
      */
     public function store(Request $request): JsonResponse

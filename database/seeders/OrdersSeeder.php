@@ -113,6 +113,16 @@ class OrdersSeeder extends Seeder
                 'created_at' => '2026-04-16 07:20:00',
                 'updated_at' => '2026-04-17 09:00:00',
             ],
+            [
+                'status' => 'in_cart',
+                'user_id' => 1,
+                'installation_address' => 'Calle Principal 1, Barcelona',
+                'shipping_address' => 'Calle Principal 1, Barcelona',
+                'shipped_at' => null,
+                'payment_method' => 'card',
+                'created_at' => '2026-04-18 10:00:00',
+                'updated_at' => '2026-04-18 10:00:00',
+            ],
 
         ];
 

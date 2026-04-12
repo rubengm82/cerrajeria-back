@@ -141,5 +141,23 @@ class OrderProductsSeeder extends Seeder
         foreach ($orderProducts as $orderProduct) {
             DB::table('order_products')->insert($orderProduct);
         }
+
+        $adminCartOrderId = DB::table('orders')
+            ->where('user_id', 1)
+            ->where('status', 'in_cart')
+            ->orderByDesc('id')
+            ->value('id');
+
+        if ($adminCartOrderId) {
+            foreach ([1 => 1, 2 => 2] as $productId => $quantity) {
+                DB::table('order_products')->insert([
+                    'order_id' => $adminCartOrderId,
+                    'product_id' => $productId,
+                    'quantity' => $quantity,
+                    'created_at' => '2026-04-18 10:00:00',
+                    'updated_at' => '2026-04-18 10:00:00',
+                ]);
+            }
+        }
     }
 }
