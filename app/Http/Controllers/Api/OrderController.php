@@ -30,6 +30,26 @@ class OrderController extends Controller
     }
 
     /**
+     * Display a listing of the resource including soft deleted.
+     */
+    public function indexWithTrashed(): JsonResponse
+    {
+        $user = auth()->user();
+
+        // Si el usuario es admin, mostrar todas las órdenes incluyendo eliminadas
+        if ($user->role === 'admin' || $user->role === 1) {
+            $orders = Order::withTrashed()->with(['user', 'products'])->get();
+        } else {
+            // Si es usuario normal, mostrar solo sus órdenes incluyendo eliminadas
+            $orders = Order::withTrashed()->with(['user', 'products'])
+                          ->where('user_id', $user->id)
+                          ->get();
+        }
+
+        return response()->json($orders);
+    }
+
+    /**
      * Store a newly created resource in storage.
      */
     public function store(Request $request): JsonResponse
