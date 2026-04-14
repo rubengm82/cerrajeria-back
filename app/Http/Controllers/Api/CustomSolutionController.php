@@ -45,7 +45,7 @@ class CustomSolutionController extends Controller
             'email' => $validated['email'],
             'phone' => $validated['phone'],
             'description' => $validated['description'],
-            'status' => $validated['status'] ?? CustomSolution::STATUS_PENDING,
+            'status' => $validated['status'] ?? CustomSolution::STATUS_NEW,
         ]);
 
         foreach ($request->file('images', []) as $image) {

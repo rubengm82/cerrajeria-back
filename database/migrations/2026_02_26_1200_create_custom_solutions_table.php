@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('email');
             $table->string('phone');
             $table->text('description');
-            $table->enum('status', CustomSolution::STATUSES)->default(CustomSolution::STATUS_PENDING);
+            $table->enum('status', CustomSolution::STATUSES)->default(CustomSolution::STATUS_NEW);
             $table->timestamps();
             $table->softDeletes();
         });
