@@ -96,12 +96,21 @@ Route::middleware('auth:sanctum')->group(function () {
 });
 Route::get('/packs/{id}', [PackController::class, 'show']);
 
+// Checkout público: permite comprar con o sin usuario autenticado
+Route::post('/checkout/orders', [OrderController::class, 'checkout']);
+
 // Rutas de pedidos
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/reports/summary', [ReportController::class, 'summary']);
     Route::get('/orders', [OrderController::class, 'index']);
     Route::get('/orders/with-trashed', [OrderController::class, 'indexWithTrashed']);
     Route::get('/orders/cart', [OrderController::class, 'cart']);
+    Route::post('/orders/cart/products', [OrderController::class, 'addProductToCart']);
+    Route::put('/orders/cart/products/{productId}', [OrderController::class, 'updateCartProduct']);
+    Route::delete('/orders/cart/products/{productId}', [OrderController::class, 'removeCartProduct']);
+    Route::post('/orders/cart/packs', [OrderController::class, 'addPackToCart']);
+    Route::put('/orders/cart/packs/{packId}', [OrderController::class, 'updateCartPack']);
+    Route::delete('/orders/cart/packs/{packId}', [OrderController::class, 'removeCartPack']);
     Route::post('/orders', [OrderController::class, 'store']);
     Route::get('/orders/{id}', [OrderController::class, 'show']);
     Route::put('/orders/{id}', [OrderController::class, 'update']);

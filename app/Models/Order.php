@@ -15,6 +15,14 @@ class Order extends Model
     protected $fillable = [
         'status',
         'user_id',
+        'customer_name',
+        'customer_last_name_one',
+        'customer_last_name_second',
+        'customer_dni',
+        'customer_phone',
+        'customer_email',
+        'customer_address',
+        'customer_zip_code',
         'installation_address',
         'shipping_address',
         'shipped_at',
@@ -39,6 +47,16 @@ class Order extends Model
     public function products(): BelongsToMany
     {
         return $this->belongsToMany(Product::class, 'order_products')
+                    ->withPivot('quantity')
+                    ->withTimestamps();
+    }
+
+    /**
+     * Relación: Un pedido tiene muchos packs.
+     */
+    public function packs(): BelongsToMany
+    {
+        return $this->belongsToMany(Pack::class, 'order_packs')
                     ->withPivot('quantity')
                     ->withTimestamps();
     }

@@ -15,6 +15,14 @@ return new class extends Migration
             $table->id();
             $table->enum('status', ['in_cart', 'pending', 'shipped', 'installation_confirmed'])->default('in_cart');
             $table->foreignId('user_id')->nullable()->constrained('users')->onDelete('set null');
+            $table->string('customer_name')->nullable();
+            $table->string('customer_last_name_one')->nullable();
+            $table->string('customer_last_name_second')->nullable();
+            $table->string('customer_dni')->nullable();
+            $table->string('customer_phone')->nullable();
+            $table->string('customer_email')->nullable();
+            $table->string('customer_address')->nullable();
+            $table->string('customer_zip_code')->nullable();
             $table->string('installation_address');
             $table->string('shipping_address');
             $table->timestamp('shipped_at')->nullable();

@@ -28,6 +28,16 @@ class Pack extends Model
     }
 
     /**
+     * Relación: Un pack puede estar en muchos pedidos.
+     */
+    public function orders(): BelongsToMany
+    {
+        return $this->belongsToMany(Order::class, 'order_packs')
+                    ->withPivot('quantity')
+                    ->withTimestamps();
+    }
+
+    /**
      * Relación: Un pack tiene muchas imágenes.
      */
     public function images(): HasMany
