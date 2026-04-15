@@ -105,6 +105,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/orders', [OrderController::class, 'index']);
     Route::get('/orders/with-trashed', [OrderController::class, 'indexWithTrashed']);
     Route::get('/orders/cart', [OrderController::class, 'cart']);
+    Route::post('/orders/cart/merge', [OrderController::class, 'mergeCart']);
     Route::post('/orders/cart/products', [OrderController::class, 'addProductToCart']);
     Route::put('/orders/cart/products/{productId}', [OrderController::class, 'updateCartProduct']);
     Route::delete('/orders/cart/products/{productId}', [OrderController::class, 'removeCartProduct']);

@@ -8,6 +8,8 @@ use App\Models\Pack;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\ValidationException;
 
 class OrderController extends Controller
 {
@@ -189,6 +191,111 @@ class OrderController extends Controller
     }
 
     /**
+     * Merge the guest cart into the authenticated user's current cart.
+     */
+    public function mergeCart(Request $request): JsonResponse
+    {
+        $validated = $request->validate([
+            'items' => 'required|array',
+            'items.*.type' => 'required|in:product,pack',
+            'items.*.id' => 'required|integer',
+            'items.*.quantity' => 'required|integer|min:1',
+        ]);
+
+        $user = auth()->user();
+        $skippedItems = [];
+
+        $order = Order::where('user_id', $user->id)
+            ->where('status', 'in_cart')
+            ->latest()
+            ->first();
+
+        if (!$order) {
+            $order = Order::create([
+                'user_id' => $user->id,
+                'status' => 'in_cart',
+                'installation_address' => $user->address ?? 'Pendent de confirmar',
+                'shipping_address' => $user->address ?? 'Pendent de confirmar',
+                'payment_method' => 'bizum',
+            ]);
+        }
+
+        foreach ($validated['items'] as $item) {
+            if ($item['type'] === 'pack') {
+                $this->mergePackCartItem($order, $item, $skippedItems);
+            } else {
+                $this->mergeProductCartItem($order, $item, $skippedItems);
+            }
+        }
+
+        $order->load(['products.category', 'products.images', 'packs.images', 'packs.products']);
+
+        return response()->json([
+            'order' => $order,
+            'skipped_items' => $skippedItems,
+        ]);
+    }
+
+    private function mergeProductCartItem(Order $order, array $item, array &$skippedItems): void
+    {
+        $product = Product::find($item['id']);
+
+        if (!$product || $product->stock <= 0) {
+            $skippedItems[] = $item;
+            return;
+        }
+
+        $quantity = min($item['quantity'], $product->stock);
+        $currentProduct = $order->products()
+            ->where('products.id', $product->id)
+            ->first();
+
+        if ($currentProduct) {
+            if ((int) $currentProduct->pivot->quantity < $quantity) {
+                $order->products()->updateExistingPivot($product->id, [
+                    'quantity' => $quantity,
+                ]);
+            }
+
+            return;
+        }
+
+        $order->products()->attach($product->id, [
+            'quantity' => $quantity,
+        ]);
+    }
+
+    private function mergePackCartItem(Order $order, array $item, array &$skippedItems): void
+    {
+        $pack = Pack::with('products')->find($item['id']);
+        $availableStock = $pack?->products->min('stock') ?? 0;
+
+        if (!$pack || $availableStock <= 0) {
+            $skippedItems[] = $item;
+            return;
+        }
+
+        $quantity = min($item['quantity'], $availableStock);
+        $currentPack = $order->packs()
+            ->where('packs.id', $pack->id)
+            ->first();
+
+        if ($currentPack) {
+            if ((int) $currentPack->pivot->quantity < $quantity) {
+                $order->packs()->updateExistingPivot($pack->id, [
+                    'quantity' => $quantity,
+                ]);
+            }
+
+            return;
+        }
+
+        $order->packs()->attach($pack->id, [
+            'quantity' => $quantity,
+        ]);
+    }
+
+    /**
      * Create an order from checkout data. Supports guests and authenticated users.
      */
     public function checkout(Request $request): JsonResponse
@@ -211,59 +318,112 @@ class OrderController extends Controller
             'items.*.quantity' => 'required|integer|min:1',
         ]);
 
-        $user = auth()->user();
-        $customer = $validated['customer'];
-        $orderData = $validated['order'];
+        DB::beginTransaction();
+
+        try {
+            $user = auth()->user();
+            $customer = $validated['customer'];
+            $orderData = $validated['order'];
+            $productItems = [];
+            $packItems = [];
+
+            foreach ($validated['items'] as $item) {
+                if ($item['type'] === 'pack') {
+                    $packItems[$item['id']] = ['quantity' => $item['quantity']];
+                } else {
+                    $productItems[$item['id']] = ['quantity' => $item['quantity']];
+                }
+            }
+
+            $this->reserveProductStockItems($productItems);
+            $this->reservePackStockItems($packItems);
+
+            $order = Order::create([
+                'user_id' => $user?->id,
+                'status' => 'pending',
+                'customer_name' => $customer['name'],
+                'customer_last_name_one' => $customer['last_name_one'],
+                'customer_last_name_second' => $customer['last_name_second'] ?? null,
+                'customer_dni' => $customer['dni'] ?? null,
+                'customer_phone' => $customer['phone'] ?? null,
+                'customer_email' => $customer['email'],
+                'customer_address' => $customer['address'],
+                'customer_zip_code' => $customer['zip_code'],
+                'installation_address' => $orderData['installation_address'],
+                'shipping_address' => $orderData['shipping_address'],
+                'payment_method' => $orderData['payment_method'],
+            ]);
+
+            $order->products()->attach($productItems);
+            $order->packs()->attach($packItems);
+            $order->load(['user', 'products.category', 'products.images', 'packs.images', 'packs.products']);
+
+            DB::commit();
+        } catch (\Throwable $error) {
+            DB::rollBack();
+            throw $error;
+        }
+
+        return response()->json($order, 201);
+    }
+
+    private function reserveOrderStock(Order $order): void
+    {
+        $order->loadMissing(['products', 'packs.products']);
+
         $productItems = [];
         $packItems = [];
 
-        foreach ($validated['items'] as $item) {
-            if ($item['type'] === 'pack') {
-                $pack = Pack::with('products')->findOrFail($item['id']);
-                $availableStock = $pack->products->min('stock') ?? 0;
-
-                if ($item['quantity'] > $availableStock) {
-                    return response()->json([
-                        'message' => "Només hi ha {$availableStock} packs disponibles per {$pack->name}.",
-                    ], 422);
-                }
-
-                $packItems[$pack->id] = ['quantity' => $item['quantity']];
-            } else {
-                $product = Product::findOrFail($item['id']);
-
-                if ($item['quantity'] > $product->stock) {
-                    return response()->json([
-                        'message' => "Només hi ha {$product->stock} unitats disponibles per {$product->name}.",
-                    ], 422);
-                }
-
-                $productItems[$product->id] = ['quantity' => $item['quantity']];
-            }
+        foreach ($order->products as $product) {
+            $productItems[$product->id] = [
+                'quantity' => (int) $product->pivot->quantity,
+            ];
         }
 
-        $order = Order::create([
-            'user_id' => $user?->id,
-            'status' => 'pending',
-            'customer_name' => $customer['name'],
-            'customer_last_name_one' => $customer['last_name_one'],
-            'customer_last_name_second' => $customer['last_name_second'] ?? null,
-            'customer_dni' => $customer['dni'] ?? null,
-            'customer_phone' => $customer['phone'] ?? null,
-            'customer_email' => $customer['email'],
-            'customer_address' => $customer['address'],
-            'customer_zip_code' => $customer['zip_code'],
-            'installation_address' => $orderData['installation_address'],
-            'shipping_address' => $orderData['shipping_address'],
-            'payment_method' => $orderData['payment_method'],
-        ]);
+        foreach ($order->packs as $pack) {
+            $packItems[$pack->id] = [
+                'quantity' => (int) $pack->pivot->quantity,
+            ];
+        }
 
-        $order->products()->attach($productItems);
-        $order->packs()->attach($packItems);
+        $this->reserveProductStockItems($productItems);
+        $this->reservePackStockItems($packItems);
+    }
 
-        $order->load(['user', 'products.category', 'products.images', 'packs.images', 'packs.products']);
+    private function reserveProductStockItems(array $productItems): void
+    {
+        foreach ($productItems as $productId => $item) {
+            $quantity = (int) $item['quantity'];
+            $product = Product::whereKey($productId)->lockForUpdate()->firstOrFail();
 
-        return response()->json($order, 201);
+            if ($quantity > $product->stock) {
+                throw ValidationException::withMessages([
+                    'stock' => "Només hi ha {$product->stock} unitats disponibles per {$product->name}.",
+                ]);
+            }
+
+            $product->decrement('stock', $quantity);
+        }
+    }
+
+    private function reservePackStockItems(array $packItems): void
+    {
+        foreach ($packItems as $packId => $item) {
+            $quantity = (int) $item['quantity'];
+            $pack = Pack::with('products')->findOrFail($packId);
+
+            foreach ($pack->products as $packProduct) {
+                $product = Product::whereKey($packProduct->id)->lockForUpdate()->firstOrFail();
+
+                if ($quantity > $product->stock) {
+                    throw ValidationException::withMessages([
+                        'stock' => "Només hi ha {$product->stock} packs disponibles per {$pack->name}.",
+                    ]);
+                }
+
+                $product->decrement('stock', $quantity);
+            }
+        }
     }
 
     /**
@@ -417,7 +577,25 @@ class OrderController extends Controller
             'shipped_at' => 'nullable|date',
         ]);
 
-        $order->update($validated);
+        DB::beginTransaction();
+
+        try {
+            $nextStatus = $validated['status'] ?? $order->status;
+
+            if ($order->status === 'in_cart' && $nextStatus === 'pending') {
+                $this->reserveOrderStock($order);
+            }
+
+            $order->update($validated);
+
+            DB::commit();
+        } catch (\Throwable $error) {
+            DB::rollBack();
+            throw $error;
+        }
+
+        $order->load(['user', 'products.category', 'products.images', 'packs.images', 'packs.products']);
+
         return response()->json($order);
     }
 
