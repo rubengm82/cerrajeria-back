@@ -12,13 +12,23 @@ class CustomSolution extends Model
 {
     use HasFactory, SoftDeletes;
 
-    public const STATUS_PENDING = 'pending';
-    public const STATUS_CONTACTED = 'contacted';
-    public const STATUS_WAITING_INSTALLATION = 'waiting_installation';
-    public const STATUS_INSTALLED = 'installed';
-    public const STATUS_REJECTED = 'rejected';
+    public const STATUS_NEW = 'nova';
+    public const STATUS_CONTACTED = 'contactat';
+    public const STATUS_BUDGET_APPROVED = 'pressupost_aprovat';
+    public const STATUS_IN_PROGRESS = 'en_curs';
+    public const STATUS_IN_TRANSIT = 'en_transit';
+    public const STATUS_FINISHED = 'finalitzat';
+    public const STATUS_REJECTED = 'rebutjat';
 
-    public const STATUSES = [ self::STATUS_PENDING, self::STATUS_CONTACTED, self::STATUS_WAITING_INSTALLATION, self::STATUS_INSTALLED, self::STATUS_REJECTED];
+    public const STATUSES = [
+        self::STATUS_NEW,
+        self::STATUS_CONTACTED,
+        self::STATUS_BUDGET_APPROVED,
+        self::STATUS_IN_PROGRESS,
+        self::STATUS_IN_TRANSIT,
+        self::STATUS_FINISHED,
+        self::STATUS_REJECTED,
+    ];
 
     protected $fillable = [
         'email',
