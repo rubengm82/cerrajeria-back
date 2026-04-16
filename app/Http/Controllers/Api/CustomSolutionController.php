@@ -36,7 +36,7 @@ class CustomSolutionController extends Controller
             'email' => 'required|string|email|max:255',
             'phone' => 'required|string|max:20',
             'description' => 'required|string',
-            'status' => 'nullable|in:' . implode(',', CustomSolution::STATUSES),
+            'status' => 'nullable|in:' . CustomSolution::STATUS_NEW,
             'images' => 'nullable|array|max:3',
             'images.*' => 'image|max:2048',
         ]);

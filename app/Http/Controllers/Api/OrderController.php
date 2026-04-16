@@ -117,6 +117,8 @@ class OrderController extends Controller
             ], 422);
         }
 
+        $this->validateCartStock($order, 'product', $product->id, $validated['quantity']);
+
         $order->products()->attach($validated['product_id'], [
             'quantity' => $validated['quantity'],
         ]);
@@ -177,6 +179,8 @@ class OrderController extends Controller
                 'order' => $order,
             ]);
         }
+
+        $this->validateCartStock($order, 'pack', $pack->id, $validated['quantity']);
 
         $order->packs()->attach($validated['pack_id'], [
             'quantity' => $validated['quantity'],
@@ -390,6 +394,80 @@ class OrderController extends Controller
         $this->reservePackStockItems($packItems);
     }
 
+    private function validateCartStock(Order $order, string $itemType, int $itemId, int $quantity): void
+    {
+        $order->loadMissing(['products', 'packs.products']);
+
+        $productItems = [];
+        $packItems = [];
+        $candidateFound = false;
+
+        foreach ($order->products as $product) {
+            $itemQuantity = (int) $product->pivot->quantity;
+
+            if ($itemType === 'product' && $product->id === $itemId) {
+                $itemQuantity = $quantity;
+                $candidateFound = true;
+            }
+
+            $productItems[$product->id] = ['quantity' => $itemQuantity];
+        }
+
+        foreach ($order->packs as $pack) {
+            $itemQuantity = (int) $pack->pivot->quantity;
+
+            if ($itemType === 'pack' && $pack->id === $itemId) {
+                $itemQuantity = $quantity;
+                $candidateFound = true;
+            }
+
+            $packItems[$pack->id] = ['quantity' => $itemQuantity];
+        }
+
+        if (!$candidateFound) {
+            if ($itemType === 'pack') {
+                $packItems[$itemId] = ['quantity' => $quantity];
+            } else {
+                $productItems[$itemId] = ['quantity' => $quantity];
+            }
+        }
+
+        $this->validateStockItems($productItems, $packItems);
+    }
+
+    private function validateStockItems(array $productItems, array $packItems): void
+    {
+        $requiredStockByProduct = [];
+        $packNamesByProduct = [];
+
+        foreach ($productItems as $productId => $item) {
+            $requiredStockByProduct[$productId] = ($requiredStockByProduct[$productId] ?? 0) + (int) $item['quantity'];
+        }
+
+        foreach ($packItems as $packId => $item) {
+            $quantity = (int) $item['quantity'];
+            $pack = Pack::with('products')->findOrFail($packId);
+
+            foreach ($pack->products as $packProduct) {
+                $requiredStockByProduct[$packProduct->id] = ($requiredStockByProduct[$packProduct->id] ?? 0) + $quantity;
+                $packNamesByProduct[$packProduct->id][] = $pack->name;
+            }
+        }
+
+        foreach ($requiredStockByProduct as $productId => $requiredQuantity) {
+            $product = Product::findOrFail($productId);
+
+            if ($requiredQuantity > $product->stock) {
+                $packNames = array_unique($packNamesByProduct[$productId] ?? []);
+                $packText = count($packNames) > 0 ? ' en els packs '.implode(', ', $packNames) : '';
+
+                throw ValidationException::withMessages([
+                    'stock' => "No hi ha prou estoc de {$product->name}{$packText}. Hi ha {$product->stock} unitats disponibles i el carret en necessita {$requiredQuantity}.",
+                ]);
+            }
+        }
+    }
+
     private function reserveProductStockItems(array $productItems): void
     {
         foreach ($productItems as $productId => $item) {
@@ -449,6 +527,8 @@ class OrderController extends Controller
             ->latest()
             ->firstOrFail();
 
+        $this->validateCartStock($order, 'product', $productId, $validated['quantity']);
+
         $order->products()->updateExistingPivot($productId, [
             'quantity' => $validated['quantity'],
         ]);
@@ -481,6 +561,8 @@ class OrderController extends Controller
             ->where('status', 'in_cart')
             ->latest()
             ->firstOrFail();
+
+        $this->validateCartStock($order, 'pack', $packId, $validated['quantity']);
 
         $order->packs()->updateExistingPivot($packId, [
             'quantity' => $validated['quantity'],

@@ -3,10 +3,21 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
-use App\Models\CustomSolution;
 
 return new class extends Migration
 {
+    private const STATUS_NEW = 'nova';
+
+    private const STATUSES = [
+        self::STATUS_NEW,
+        'contactat',
+        'pressupost_aprovat',
+        'en_curs',
+        'en_transit',
+        'finalitzat',
+        'rebutjat',
+    ];
+
     /**
      * Run the migrations.
      */
@@ -17,7 +28,7 @@ return new class extends Migration
             $table->string('email');
             $table->string('phone');
             $table->text('description');
-            $table->enum('status', CustomSolution::STATUSES)->default(CustomSolution::STATUS_NEW);
+            $table->enum('status', self::STATUSES)->default(self::STATUS_NEW);
             $table->timestamps();
             $table->softDeletes();
         });
