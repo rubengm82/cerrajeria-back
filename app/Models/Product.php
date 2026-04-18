@@ -18,6 +18,7 @@ class Product extends Model
         'description',
         'price',
         'stock',
+        'is_stock_break',
         'code',
         'discount',
         'category_id',
@@ -36,6 +37,7 @@ class Product extends Model
         'is_installable' => 'boolean',
         'is_important_to_show' => 'boolean',
         'is_active' => 'boolean',
+        'is_stock_break' => 'boolean',
     ];
 
     /**

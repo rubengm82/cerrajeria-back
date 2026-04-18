@@ -17,6 +17,7 @@ return new class extends Migration
             $table->text('description')->nullable();
             $table->decimal('price', 10, 2);
             $table->integer('stock');
+            $table->boolean('is_stock_break')->default(false);
             $table->string('code')->nullable();
             $table->decimal('discount', 5, 2)->nullable();
             $table->foreignId('category_id')->nullable()->constrained('categories')->onDelete('set null');
