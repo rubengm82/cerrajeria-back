@@ -15,6 +15,7 @@ use App\Http\Controllers\Api\ProductImageController;
 use App\Http\Controllers\Api\PackImageController;
 use App\Http\Controllers\Api\FeatureTypeController;
 use App\Http\Controllers\Api\FeatureController;
+use App\Http\Controllers\Api\SearchController;
 use App\Http\Controllers\InvoiceController;
 
 
@@ -68,6 +69,10 @@ Route::get('/categories/{id}', [CategoryController::class, 'show']);
 // Rutas de productos - PÚBLICAS
 Route::get('/products', [ProductController::class, 'index']);
 Route::get('/products/important', [ProductController::class, 'getImportantProducts']);
+
+// Rutas de búsqueda - PÚBLICAS
+Route::get('/search', [App\Http\Controllers\Api\SearchController::class, 'search']);
+Route::get('/search/quick', [App\Http\Controllers\Api\SearchController::class, 'quickSearch']);
 
 // Rutas de productos - PROTEGIDAS (solo admin)
 Route::middleware('auth:sanctum')->group(function () {
