@@ -69,6 +69,7 @@ Route::get('/categories/{id}', [CategoryController::class, 'show']);
 // Rutas de productos - PÚBLICAS
 Route::get('/products', [ProductController::class, 'index']);
 Route::get('/products/important', [ProductController::class, 'getImportantProducts']);
+Route::get('/products/{id}', [ProductController::class, 'show']);
 
 // Rutas de búsqueda - PÚBLICAS
 Route::get('/search', [App\Http\Controllers\Api\SearchController::class, 'search']);
@@ -78,7 +79,6 @@ Route::get('/search/quick', [App\Http\Controllers\Api\SearchController::class, '
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/products/with-trashed', [ProductController::class, 'indexWithTrashed']);
     Route::post('/products', [ProductController::class, 'store']);
-    Route::get('/products/{id}', [ProductController::class, 'show']);
     Route::put('/products/{id}', [ProductController::class, 'update']);
     Route::delete('/products/{id}', [ProductController::class, 'destroy']);
     Route::get('/products/trashed', [ProductController::class, 'trashed']);

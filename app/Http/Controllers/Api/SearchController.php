@@ -55,7 +55,7 @@ class SearchController extends Controller
         $searchTerm = '%' . trim($query) . '%';
 
         // 1. Búsqueda de productos
-        $productsQuery = Product::with(['category', 'images'])
+        $productsQuery = Product::with(['category', 'images', 'features.type'])
             ->where(function($q) use ($searchTerm) {
                 $q->where('name', 'LIKE', $searchTerm)
                   ->orWhere('description', 'LIKE', $searchTerm)
