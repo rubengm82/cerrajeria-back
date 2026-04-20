@@ -175,7 +175,12 @@ class SearchController extends Controller
                 }
             ])
             ->withCount('products')
-            ->where('name', 'LIKE', $searchTerm)
+            ->where(function($q) use ($searchTerm) {
+                $q->where('name', 'LIKE', $searchTerm)
+                  ->orWhereHas('products', function($q2) use ($searchTerm) {
+                      $q2->where('name', 'LIKE', $searchTerm);
+                  });
+            })
             ->limit(3)
             ->get();
 
