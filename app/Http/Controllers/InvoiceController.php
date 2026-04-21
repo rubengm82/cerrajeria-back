@@ -80,10 +80,10 @@ class InvoiceController extends Controller
                 'last_name_one' => $order->customer_last_name_one ?? $order->user->last_name_one ?? '',
                 'last_name_second' => $order->customer_last_name_second ?? $order->user->last_name_second ?? '',
                 'dni' => $order->customer_dni ?? $order->user->dni ?? '',
-                'address' => $order->shipping_address ?? $order->customer_address ?? $order->user->address ?? '',
-                'zip_code' => $order->customer_zip_code ?? $order->user->zip_code ?? '',
+                'address' => $order->shipping_address ?? $order->customer_address ?? $order->user->shipping_address ?? '',
+                'zip_code' => $order->customer_zip_code ?? $order->user->shipping_zip_code ?? '',
                 'city' => '',
-                'country' => $order->user->country ?? 'España',
+                'country' => $order->user->shipping_country ?? 'España',
                 'email' => $order->customer_email ?? $order->user->email ?? '',
             ],
 

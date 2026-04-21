@@ -91,8 +91,8 @@ class OrderController extends Controller
             $order = Order::create([
                 'user_id' => $user->id,
                 'status' => 'in_cart',
-                'installation_address' => $user->address ?? 'Pendent de confirmar',
-                'shipping_address' => $user->address ?? 'Pendent de confirmar',
+                'installation_address' => $user->shipping_address ?? 'Pendent de confirmar',
+                'shipping_address' => $user->shipping_address ?? 'Pendent de confirmar',
                 'payment_method' => 'bizum',
             ]);
         }
@@ -160,8 +160,8 @@ class OrderController extends Controller
             $order = Order::create([
                 'user_id' => $user->id,
                 'status' => 'in_cart',
-                'installation_address' => $user->address ?? 'Pendent de confirmar',
-                'shipping_address' => $user->address ?? 'Pendent de confirmar',
+                'installation_address' => $user->shipping_address ?? 'Pendent de confirmar',
+                'shipping_address' => $user->shipping_address ?? 'Pendent de confirmar',
                 'payment_method' => 'bizum',
             ]);
         }
@@ -218,8 +218,8 @@ class OrderController extends Controller
             $order = Order::create([
                 'user_id' => $user->id,
                 'status' => 'in_cart',
-                'installation_address' => $user->address ?? 'Pendent de confirmar',
-                'shipping_address' => $user->address ?? 'Pendent de confirmar',
+                'installation_address' => $user->shipping_address ?? 'Pendent de confirmar',
+                'shipping_address' => $user->shipping_address ?? 'Pendent de confirmar',
                 'payment_method' => 'bizum',
             ]);
         }

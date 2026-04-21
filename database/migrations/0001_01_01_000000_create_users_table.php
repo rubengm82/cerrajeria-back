@@ -19,8 +19,16 @@ return new class extends Migration
             $table->string('dni')->unique()->nullable();
             $table->string('phone')->nullable();
             $table->string('email')->unique();
-            $table->string('address')->nullable();
-            $table->string('zip_code')->nullable();
+            // Dirección de envío
+            $table->string('shipping_address')->nullable();
+            $table->string('shipping_zip_code')->nullable();
+            $table->string('shipping_province')->nullable();
+            $table->string('shipping_country')->nullable()->default('España');
+            // Dirección de facturación
+            $table->string('billing_address')->nullable();
+            $table->string('billing_zip_code')->nullable();
+            $table->string('billing_province')->nullable();
+            $table->string('billing_country')->nullable()->default('España');
             $table->string('password');
             $table->enum('role', ['admin', 'user'])->default('user');
             $table->timestamp('email_verified_at')->nullable();
