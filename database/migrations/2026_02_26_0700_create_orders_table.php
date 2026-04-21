@@ -25,6 +25,8 @@ return new class extends Migration
             $table->string('customer_zip_code')->nullable();
             $table->string('installation_address');
             $table->string('shipping_address');
+            $table->decimal('shipping_price', 10, 2)->default(0);
+            $table->decimal('installation_price', 10, 2)->default(0);
             $table->timestamp('shipped_at')->nullable();
             $table->enum('payment_method', ['paypal', 'card', 'bizum']);
             $table->timestamps();

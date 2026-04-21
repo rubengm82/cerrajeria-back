@@ -37,7 +37,6 @@ class ProductsSeeder extends Seeder
                 'category_id' => $categories['Cilindres'],
                 'is_installable' => true,
                 'is_important_to_show' => true,
-                'installation_price' => 35.00,
                 'price_keys' => 0,
                 'is_active' => true,
                 'feature_values' => [
@@ -61,7 +60,6 @@ class ProductsSeeder extends Seeder
                 'category_id' => $categories['Cilindres'],
                 'is_installable' => true,
                 'is_important_to_show' => true,
-                'installation_price' => 35.00,
                 'price_keys' => 0,
                 'is_active' => true,
                 'feature_values' => [
@@ -85,7 +83,6 @@ class ProductsSeeder extends Seeder
                 'category_id' => $categories['Cilindres'],
                 'is_installable' => true,
                 'is_important_to_show' => true,
-                'installation_price' => 35.00,
                 'price_keys' => 0,
                 'is_active' => true,
                 'feature_values' => [
@@ -109,7 +106,6 @@ class ProductsSeeder extends Seeder
                 'category_id' => $categories['Cilindres'],
                 'is_installable' => true,
                 'is_important_to_show' => true,
-                'installation_price' => 35.00,
                 'price_keys' => 0,
                 'is_active' => true,
                 'feature_values' => [
@@ -133,7 +129,6 @@ class ProductsSeeder extends Seeder
                 'category_id' => $categories['Cilindres'],
                 'is_installable' => true,
                 'is_important_to_show' => true,
-                'installation_price' => 35.00,
                 'price_keys' => 0,
                 'is_active' => true,
                 'feature_values' => [
@@ -157,7 +152,6 @@ class ProductsSeeder extends Seeder
                 'category_id' => $categories['Cilindres'],
                 'is_installable' => true,
                 'is_important_to_show' => true,
-                'installation_price' => 35.00,
                 'price_keys' => 0,
                 'is_active' => true,
                 'feature_values' => [
@@ -181,7 +175,6 @@ class ProductsSeeder extends Seeder
                 'category_id' => $categories['Cilindres'],
                 'is_installable' => true,
                 'is_important_to_show' => true,
-                'installation_price' => 35.00,
                 'price_keys' => 0,
                 'is_active' => true,
                 'feature_values' => [
@@ -205,7 +198,6 @@ class ProductsSeeder extends Seeder
                 'category_id' => $categories['Cilindres'],
                 'is_installable' => true,
                 'is_important_to_show' => true,
-                'installation_price' => 35.00,
                 'price_keys' => 0,
                 'is_active' => true,
                 'feature_values' => [
@@ -230,7 +222,6 @@ class ProductsSeeder extends Seeder
                 'category_id' => $categories['Cilindres'],
                 'is_installable' => true,
                 'is_important_to_show' => false,
-                'installation_price' => 35.00,
                 'price_keys' => 0,
                 'is_active' => true,
                 'feature_values' => [
@@ -254,7 +245,6 @@ class ProductsSeeder extends Seeder
                 'category_id' => $categories['Cilindres'],
                 'is_installable' => true,
                 'is_important_to_show' => false,
-                'installation_price' => 35.00,
                 'price_keys' => 0,
                 'is_active' => true,
                 'feature_values' => [
@@ -279,7 +269,6 @@ class ProductsSeeder extends Seeder
                 'category_id' => $categories['Cilindres'],
                 'is_installable' => true,
                 'is_important_to_show' => false,
-                'installation_price' => 35.00,
                 'price_keys' => 0,
                 'is_active' => true,
                 'feature_values' => [
@@ -303,7 +292,6 @@ class ProductsSeeder extends Seeder
                 'category_id' => $categories['Cilindres'],
                 'is_installable' => true,
                 'is_important_to_show' => false,
-                'installation_price' => 35.00,
                 'price_keys' => 0,
                 'is_active' => true,
                 'feature_values' => [
@@ -328,7 +316,6 @@ class ProductsSeeder extends Seeder
                 'category_id' => $categories['Escuts'],
                 'is_installable' => true,
                 'is_important_to_show' => false,
-                'installation_price' => 25.00,
                 'price_keys' => 0,
                 'is_active' => true,
                 'feature_values' => [
@@ -347,7 +334,6 @@ class ProductsSeeder extends Seeder
                 'category_id' => $categories['Escuts'],
                 'is_installable' => true,
                 'is_important_to_show' => false,
-                'installation_price' => 25.00,
                 'price_keys' => 0,
                 'is_active' => true,
                 'feature_values' => [
@@ -367,7 +353,6 @@ class ProductsSeeder extends Seeder
                 'category_id' => $categories['Escuts'],
                 'is_installable' => true,
                 'is_important_to_show' => false,
-                'installation_price' => 25.00,
                 'price_keys' => 0,
                 'is_active' => true,
                 'feature_values' => [
@@ -386,7 +371,6 @@ class ProductsSeeder extends Seeder
                 'category_id' => $categories['Escuts'],
                 'is_installable' => true,
                 'is_important_to_show' => false,
-                'installation_price' => 25.00,
                 'price_keys' => 0,
                 'is_active' => true,
                 'feature_values' => [
@@ -406,7 +390,6 @@ class ProductsSeeder extends Seeder
                 'category_id' => $categories['Escuts'],
                 'is_installable' => true,
                 'is_important_to_show' => false,
-                'installation_price' => 25.00,
                 'price_keys' => 0,
                 'is_active' => true,
                 'feature_values' => [
@@ -425,7 +408,6 @@ class ProductsSeeder extends Seeder
                 'category_id' => $categories['Escuts'],
                 'is_installable' => true,
                 'is_important_to_show' => false,
-                'installation_price' => 25.00,
                 'price_keys' => 0,
                 'is_active' => true,
                 'feature_values' => [
@@ -445,7 +427,6 @@ class ProductsSeeder extends Seeder
                 'category_id' => $categories['Escuts'],
                 'is_installable' => true,
                 'is_important_to_show' => false,
-                'installation_price' => 25.00,
                 'price_keys' => 0,
                 'is_active' => true,
                 'feature_values' => [
@@ -464,7 +445,6 @@ class ProductsSeeder extends Seeder
                 'category_id' => $categories['Escuts'],
                 'is_installable' => true,
                 'is_important_to_show' => false,
-                'installation_price' => 25.00,
                 'price_keys' => 0,
                 'is_active' => true,
                 'feature_values' => [
@@ -483,7 +463,6 @@ class ProductsSeeder extends Seeder
                 'category_id' => $categories['Escuts'],
                 'is_installable' => true,
                 'is_important_to_show' => false,
-                'installation_price' => 25.00,
                 'price_keys' => 0,
                 'is_active' => true,
                 'feature_values' => [
@@ -502,7 +481,6 @@ class ProductsSeeder extends Seeder
                 'category_id' => $categories['Escuts'],
                 'is_installable' => true,
                 'is_important_to_show' => false,
-                'installation_price' => 25.00,
                 'price_keys' => 0,
                 'is_active' => true,
                 'feature_values' => [
@@ -521,7 +499,6 @@ class ProductsSeeder extends Seeder
                 'category_id' => $categories['Escuts'],
                 'is_installable' => true,
                 'is_important_to_show' => false,
-                'installation_price' => 25.00,
                 'price_keys' => 0,
                 'is_active' => true,
                 'feature_values' => [
@@ -540,7 +517,6 @@ class ProductsSeeder extends Seeder
                 'category_id' => $categories['Escuts'],
                 'is_installable' => true,
                 'is_important_to_show' => false,
-                'installation_price' => 25.00,
                 'price_keys' => 0,
                 'is_active' => true,
                 'feature_values' => [
@@ -559,7 +535,6 @@ class ProductsSeeder extends Seeder
                 'category_id' => $categories['Escuts'],
                 'is_installable' => true,
                 'is_important_to_show' => false,
-                'installation_price' => 25.00,
                 'price_keys' => 0,
                 'is_active' => true,
                 'feature_values' => [
@@ -580,7 +555,6 @@ class ProductsSeeder extends Seeder
                 'category_id' => $categories['Escuts'],
                 'is_installable' => true,
                 'is_important_to_show' => false,
-                'installation_price' => 25.00,
                 'price_keys' => 0,
                 'is_active' => true,
                 'feature_values' => [
@@ -601,7 +575,6 @@ class ProductsSeeder extends Seeder
                 'category_id' => $categories['Escuts'],
                 'is_installable' => true,
                 'is_important_to_show' => false,
-                'installation_price' => 25.00,
                 'price_keys' => 0,
                 'is_active' => true,
                 'feature_values' => [
@@ -622,7 +595,6 @@ class ProductsSeeder extends Seeder
                 'category_id' => $categories['Escuts'],
                 'is_installable' => true,
                 'is_important_to_show' => false,
-                'installation_price' => 25.00,
                 'price_keys' => 0,
                 'is_active' => true,
                 'feature_values' => [
@@ -644,7 +616,6 @@ class ProductsSeeder extends Seeder
                 'category_id' => $categories['Segon Pany'],
                 'is_installable' => true,
                 'is_important_to_show' => false,
-                'installation_price' => 50.00,
                 'price_keys' => 0,
                 'is_active' => true,
                 'feature_values' => [
@@ -665,7 +636,6 @@ class ProductsSeeder extends Seeder
                 'category_id' => $categories['Segon Pany'],
                 'is_installable' => true,
                 'is_important_to_show' => false,
-                'installation_price' => 50.00,
                 'price_keys' => 0,
                 'is_active' => true,
                 'feature_values' => [

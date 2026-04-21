@@ -24,7 +24,6 @@ class Product extends Model
         'category_id',
         'is_installable',
         'is_important_to_show',
-        'installation_price',
         'price_keys',
         'is_active',
     ];
@@ -32,7 +31,6 @@ class Product extends Model
     protected $casts = [
         'price' => 'decimal:2',
         'discount' => 'decimal:2',
-        'installation_price' => 'decimal:2',
         'price_keys' => 'decimal:2',
         'is_installable' => 'boolean',
         'is_important_to_show' => 'boolean',
@@ -62,7 +60,7 @@ class Product extends Model
     public function orders(): BelongsToMany
     {
         return $this->belongsToMany(Order::class, 'order_products')
-            ->withPivot('quantity')
+            ->withPivot('quantity', 'installation_requested')
             ->withTimestamps();
     }
 

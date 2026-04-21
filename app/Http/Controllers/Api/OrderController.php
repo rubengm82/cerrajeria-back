@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\CommerceSetting;
 use App\Models\Order;
 use App\Models\Pack;
 use App\Models\Product;
@@ -77,6 +78,7 @@ class OrderController extends Controller
         $validated = $request->validate([
             'product_id' => 'required|exists:products,id',
             'quantity' => 'required|integer|min:1',
+            'installation_requested' => 'nullable|boolean',
         ]);
 
         $user = auth()->user();
@@ -121,6 +123,7 @@ class OrderController extends Controller
 
         $order->products()->attach($validated['product_id'], [
             'quantity' => $validated['quantity'],
+            'installation_requested' => $product->is_installable && (bool) ($validated['installation_requested'] ?? false),
         ]);
 
         $order->load(['products.category', 'products.images', 'packs.images', 'packs.products']);
@@ -204,6 +207,7 @@ class OrderController extends Controller
             'items.*.type' => 'required|in:product,pack',
             'items.*.id' => 'required|integer',
             'items.*.quantity' => 'required|integer|min:1',
+            'items.*.installation_requested' => 'nullable|boolean',
         ]);
 
         $user = auth()->user();
@@ -258,6 +262,11 @@ class OrderController extends Controller
             if ((int) $currentProduct->pivot->quantity < $quantity) {
                 $order->products()->updateExistingPivot($product->id, [
                     'quantity' => $quantity,
+                    'installation_requested' => $product->is_installable && (bool) ($item['installation_requested'] ?? false),
+                ]);
+            } elseif (array_key_exists('installation_requested', $item)) {
+                $order->products()->updateExistingPivot($product->id, [
+                    'installation_requested' => $product->is_installable && (bool) $item['installation_requested'],
                 ]);
             }
 
@@ -266,6 +275,7 @@ class OrderController extends Controller
 
         $order->products()->attach($product->id, [
             'quantity' => $quantity,
+            'installation_requested' => $product->is_installable && (bool) ($item['installation_requested'] ?? false),
         ]);
     }
 
@@ -320,6 +330,7 @@ class OrderController extends Controller
             'items.*.type' => 'required|in:product,pack',
             'items.*.id' => 'required|integer',
             'items.*.quantity' => 'required|integer|min:1',
+            'items.*.installation_requested' => 'nullable|boolean',
         ]);
 
         DB::beginTransaction();
@@ -335,7 +346,11 @@ class OrderController extends Controller
                 if ($item['type'] === 'pack') {
                     $packItems[$item['id']] = ['quantity' => $item['quantity']];
                 } else {
-                    $productItems[$item['id']] = ['quantity' => $item['quantity']];
+                    $product = Product::findOrFail($item['id']);
+                    $productItems[$item['id']] = [
+                        'quantity' => $item['quantity'],
+                        'installation_requested' => $product->is_installable && (bool) ($item['installation_requested'] ?? false),
+                    ];
                 }
             }
 
@@ -355,6 +370,8 @@ class OrderController extends Controller
                 'customer_zip_code' => $customer['zip_code'],
                 'installation_address' => $orderData['installation_address'],
                 'shipping_address' => $orderData['shipping_address'],
+                'shipping_price' => CommerceSetting::current()->shipping_price,
+                'installation_price' => $this->getInstallationPrice($productItems, $packItems),
                 'payment_method' => $orderData['payment_method'],
             ]);
 
@@ -381,6 +398,7 @@ class OrderController extends Controller
         foreach ($order->products as $product) {
             $productItems[$product->id] = [
                 'quantity' => (int) $product->pivot->quantity,
+                'installation_requested' => (bool) $product->pivot->installation_requested,
             ];
         }
 
@@ -392,6 +410,46 @@ class OrderController extends Controller
 
         $this->reserveProductStockItems($productItems);
         $this->reservePackStockItems($packItems);
+    }
+
+    private function getInstallationPrice(array $productItems, array $packItems): float
+    {
+        $hasInstallation = collect($productItems)->contains(fn ($item) => (bool) ($item['installation_requested'] ?? false));
+
+        if (! $hasInstallation) {
+            return 0;
+        }
+
+        $subtotal = 0;
+
+        foreach ($productItems as $productId => $item) {
+            $product = Product::findOrFail($productId);
+            $subtotal += $this->getProductSalePrice($product) * (int) $item['quantity'];
+        }
+
+        foreach ($packItems as $packId => $item) {
+            $pack = Pack::findOrFail($packId);
+            $subtotal += (float) $pack->total_price * (int) $item['quantity'];
+        }
+
+        foreach (CommerceSetting::current()->installation_rules ?? [] as $rule) {
+            $min = (float) ($rule['min_subtotal'] ?? 0);
+            $max = $rule['max_subtotal'] ?? null;
+
+            if ($subtotal >= $min && ($max === null || $subtotal <= (float) $max)) {
+                return (float) ($rule['price'] ?? 0);
+            }
+        }
+
+        return 0;
+    }
+
+    private function getProductSalePrice(Product $product): float
+    {
+        $price = (float) $product->price;
+        $discount = (float) ($product->discount ?? 0);
+
+        return $discount <= 0 ? $price : $price * (1 - $discount / 100);
     }
 
     private function validateCartStock(Order $order, string $itemType, int $itemId, int $quantity): void
@@ -511,6 +569,7 @@ class OrderController extends Controller
     {
         $validated = $request->validate([
             'quantity' => 'required|integer|min:1',
+            'installation_requested' => 'nullable|boolean',
         ]);
 
         $user = auth()->user();
@@ -529,9 +588,13 @@ class OrderController extends Controller
 
         $this->validateCartStock($order, 'product', $productId, $validated['quantity']);
 
-        $order->products()->updateExistingPivot($productId, [
-            'quantity' => $validated['quantity'],
-        ]);
+        $pivotData = ['quantity' => $validated['quantity']];
+
+        if (array_key_exists('installation_requested', $validated)) {
+            $pivotData['installation_requested'] = $product->is_installable && (bool) $validated['installation_requested'];
+        }
+
+        $order->products()->updateExistingPivot($productId, $pivotData);
 
         $order->load(['products.category', 'products.images', 'packs.images', 'packs.products']);
 
@@ -666,6 +729,27 @@ class OrderController extends Controller
 
             if ($order->status === 'in_cart' && $nextStatus === 'pending') {
                 $this->reserveOrderStock($order);
+                $setting = CommerceSetting::current();
+                $order->loadMissing(['products', 'packs.products']);
+
+                $productItems = [];
+                $packItems = [];
+
+                foreach ($order->products as $product) {
+                    $productItems[$product->id] = [
+                        'quantity' => (int) $product->pivot->quantity,
+                        'installation_requested' => (bool) $product->pivot->installation_requested,
+                    ];
+                }
+
+                foreach ($order->packs as $pack) {
+                    $packItems[$pack->id] = [
+                        'quantity' => (int) $pack->pivot->quantity,
+                    ];
+                }
+
+                $validated['shipping_price'] = $setting->shipping_price;
+                $validated['installation_price'] = $this->getInstallationPrice($productItems, $packItems);
             }
 
             $order->update($validated);
