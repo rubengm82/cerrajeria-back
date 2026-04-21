@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Auth;
 use Barryvdh\DomPDF\Facade\Pdf;
 use App\Models\Order;
 
-class InvoiceController extends Controller
+class AlbaranController extends Controller
 {
     public function download($id)
     {
@@ -18,23 +18,23 @@ class InvoiceController extends Controller
 
         // Check if user can access this order
         if ($user->role !== 'admin' && $user->role !== 1 && $order->user_id !== $user->id) {
-            abort(403, 'No tienes permiso para acceder a esta factura.');
+            abort(403, 'No tienes permiso para acceder a este albarán.');
         }
 
-        // Prepare invoice data from order
-        $invoice = $this->prepareInvoiceData($order);
+        // Prepare albaran data from order
+        $albaran = $this->prepareAlbaranData($order);
 
         // Generate PDF
-        $pdf = Pdf::loadView('invoices.invoice', compact('invoice'));
+        $pdf = Pdf::loadView('albaranes.albaran', compact('albaran'));
 
         // Set paper size and orientation
         $pdf->setPaper('a4', 'portrait');
 
         // Return PDF download
-        return $pdf->download('factura-' . $order->id . '.pdf');
+        return $pdf->download('albaran-' . $order->id . '.pdf');
     }
 
-    private function prepareInvoiceData($order)
+    private function prepareAlbaranData($order)
     {
         $subtotal = 0;
         $items = [];
@@ -71,7 +71,7 @@ class InvoiceController extends Controller
         $taxAmount = $subtotal * ($taxRate / 100);
 
         return (object) [
-            'number' => 'INV-' . str_pad($order->id, 6, '0', STR_PAD_LEFT),
+            'number' => 'ALB-' . str_pad($order->id, 6, '0', STR_PAD_LEFT),
             'date' => $order->created_at,
             'due_date' => $order->created_at->addDays(30),
 

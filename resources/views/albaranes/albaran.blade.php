@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Factura - {{ $invoice->number }}</title>
+<title>Albarán - {{ $albaran->number }}</title>
 
 <style>
 @page {
@@ -42,7 +42,7 @@ body {
     line-height: 1.3;
 }
 
-.invoice-title {
+.albaran-title {
     text-align: right;
     font-size: 22px;
     font-weight: bold;
@@ -166,8 +166,8 @@ body {
                     empresa@serralleriasolidaria.cat
                 </div>
             </td>
-            <td width="40%" class="invoice-title">
-                FACTURA
+            <td width="40%" class="albaran-title">
+                ALBARÁN
             </td>
         </tr>
     </table>
@@ -176,28 +176,28 @@ body {
     <table class="info-table">
         <tr>
             <td width="50%">
-                <div class="section-title">Facturar a:</div>
+                <div class="section-title">Entregar a:</div>
                 <div class="customer-info">
-                    {{ $invoice->customer->name }} {{ $invoice->customer->last_name_one }} {{ $invoice->customer->last_name_second }} {{ $invoice->customer->zip_code }}<br>
-                    {{ $invoice->customer->address }}<br>
-                    {{ $invoice->customer->country }}<br>
-                    DNI: {{ $invoice->customer->dni }}<br>
-                    E-Mail: {{ $invoice->customer->email }}
+                    {{ $albaran->customer->name }} {{ $albaran->customer->last_name_one }} {{ $albaran->customer->last_name_second }} {{ $albaran->customer->zip_code }}<br>
+                    {{ $albaran->customer->address }}<br>
+                    {{ $albaran->customer->country }}<br>
+                    DNI: {{ $albaran->customer->dni }}<br>
+                    E-Mail: {{ $albaran->customer->email }}
                 </div>
             </td>
             <td width="50%">
                 <table class="meta-table">
                     <tr>
-                        <td class="meta-label">Factura Nº:</td>
-                        <td>{{ $invoice->number }}</td>
+                        <td class="meta-label">Albarán Nº:</td>
+                        <td>{{ $albaran->number }}</td>
                     </tr>
                     <tr>
                         <td class="meta-label">Data:</td>
-                        <td>{{ $invoice->date->format('d/m/Y') }}</td>
+                        <td>{{ $albaran->date->format('d/m/Y') }}</td>
                     </tr>
                     <tr>
                         <td class="meta-label">Venciment:</td>
-                        <td>{{ $invoice->due_date->format('d/m/Y') }}</td>
+                        <td>{{ $albaran->due_date->format('d/m/Y') }}</td>
                     </tr>
                 </table>
             </td>
@@ -215,7 +215,7 @@ body {
             </tr>
         </thead>
         <tbody>
-            @foreach($invoice->items as $item)
+            @foreach($albaran->items as $item)
             <tr>
                 <td>{{ $item->description }}</td>
                 <td class="text-right">{{ $item->quantity }}</td>
@@ -230,26 +230,26 @@ body {
     <table class="totals">
         <tr>
             <td class="label">Subtotal:</td>
-            <td class="value">{{ number_format($invoice->subtotal, 2, ',', '.') }} €</td>
+            <td class="value">{{ number_format($albaran->subtotal, 2, ',', '.') }} €</td>
         </tr>
 
-        @if($invoice->tax_rate > 0)
+        @if($albaran->tax_rate > 0)
         <tr>
-            <td class="label">IVA ({{ $invoice->tax_rate }}%):</td>
-            <td class="value">{{ number_format($invoice->tax_amount, 2, ',', '.') }} €</td>
+            <td class="label">IVA ({{ $albaran->tax_rate }}%):</td>
+            <td class="value">{{ number_format($albaran->tax_amount, 2, ',', '.') }} €</td>
         </tr>
         @endif
 
         <tr class="total">
             <td class="label"><strong>Total:</strong></td>
-            <td class="value"><strong>{{ number_format($invoice->total, 2, ',', '.') }} €</strong></td>
+            <td class="value"><strong>{{ number_format($albaran->total, 2, ',', '.') }} €</strong></td>
         </tr>
     </table>
 
     <!-- FOOTER -->
     <div class="footer">
         <strong>Gràcies per la vostra compra!</strong><br>
-        Aquesta factura ha estat generada automàticament.
+        Aquest albarà ha estat generat automàticament.
     </div>
 
 </div>

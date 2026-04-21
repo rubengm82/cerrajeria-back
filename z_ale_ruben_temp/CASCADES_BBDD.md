@@ -211,7 +211,7 @@ $products = Product::onlyTrashed()->get();
 ## 📚 Referencias
 
 - **Laravel Documentation**: [Foreign Key Constraints](https://laravel.com/docs/10.x/migrations#foreign-key-constraints)
-- **GDPR**: Los datos pueden conservarse si son necesarios para cumplimiento legal (facturas, pedidos, etc.)
+- **GDPR**: Los datos pueden conservarse si son necesarios para cumplimiento legal (albaranes, pedidos, etc.)
 - **Best Practice**: Siempre considerar si los datos hijos deben sobrevivir a la eliminación del padre.
 
 ---

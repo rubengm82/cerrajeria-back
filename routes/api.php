@@ -16,7 +16,7 @@ use App\Http\Controllers\Api\PackImageController;
 use App\Http\Controllers\Api\FeatureTypeController;
 use App\Http\Controllers\Api\FeatureController;
 use App\Http\Controllers\Api\SearchController;
-use App\Http\Controllers\InvoiceController;
+use App\Http\Controllers\AlbaranController;
 
 
 /* *************** */
@@ -197,5 +197,5 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::delete('/custom-solutions/{id}/force', [CustomSolutionController::class, 'forceDelete']);
 });
 
-// Ruta para descargar facturas (protegida)
-Route::middleware('auth:sanctum')->get('/invoices/{id}/download', [InvoiceController::class, 'download']);
+// Ruta para descargar albaranes (protegida)
+Route::middleware('auth:sanctum')->get('/albaranes/{id}/download', [AlbaranController::class, 'download']);
