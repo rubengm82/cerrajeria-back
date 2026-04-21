@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\Order;
+use App\Models\User;
 use Illuminate\Database\Seeder;
 
 class OrdersSeeder extends Seeder
@@ -12,122 +13,68 @@ class OrdersSeeder extends Seeder
      */
     public function run(): void
     {
-        $orders = [
-            [
-                'status' => 'pending',
-                'user_id' => 1,
-                'installation_address' => 'Calle de Prueba 123, Barcelona',
-                'shipping_address' => 'Calle de Prueba 123, Barcelona',
-                'shipped_at' => '2026-04-10 14:20:09',
-                'payment_method' => 'paypal',
-                'created_at' => '2026-04-09 10:15:10',
-                'updated_at' => '2026-04-09 12:20:05',
-            ],
-            [
-                'status' => 'installation_confirmed',
-                'user_id' => 2,
-                'installation_address' => 'Avenida de la Libertad 456, Madrid',
-                'shipping_address' => 'Avenida de la Libertad 456, Madrid',
-                'shipped_at' => '2026-04-11 09:30:15',
-                'payment_method' => 'card',
-                'created_at' => '2026-04-10 08:45:20',
-                'updated_at' => '2026-04-11 10:00:30',
-            ],
-            [
-                'status' => 'pending',
-                'user_id' => 1,
-                'installation_address' => 'Plaza Mayor 789, Valencia',
-                'shipping_address' => 'Plaza Mayor 789, Valencia',
-                'shipped_at' => null,
-                'payment_method' => 'bizum',
-                'created_at' => '2026-04-11 14:20:45',
-                'updated_at' => '2026-04-11 15:10:00',
-            ],
-            [
-                'status' => 'pending',
-                'user_id' => 2,
-                'installation_address' => 'Rambla de Catalunya 321, Barcelona',
-                'shipping_address' => 'Rambla de Catalunya 321, Barcelona',
-                'shipped_at' => null,
-                'payment_method' => 'paypal',
-                'created_at' => '2026-04-12 11:30:00',
-                'updated_at' => '2026-04-12 12:00:00',
-            ],
-            [
-                'status' => 'shipped',
-                'user_id' => 1,
-                'installation_address' => 'Gran Vía 654, Bilbao',
-                'shipping_address' => 'Gran Vía 654, Bilbao',
-                'shipped_at' => '2026-04-13 16:45:20',
-                'payment_method' => 'card',
-                'created_at' => '2026-04-12 13:15:30',
-                'updated_at' => '2026-04-13 17:00:00',
-            ],
-            [
-                'status' => 'installation_confirmed',
-                'user_id' => 2,
-                'installation_address' => 'Paseo de Gracia 987, Barcelona',
-                'shipping_address' => 'Paseo de Gracia 987, Barcelona',
-                'shipped_at' => '2026-04-14 10:20:10',
-                'payment_method' => 'paypal',
-                'created_at' => '2026-04-13 09:00:00',
-                'updated_at' => '2026-04-14 11:00:00',
-            ],
-            [
-                'status' => 'pending',
-                'user_id' => 1,
-                'installation_address' => 'Calle de las Flores 147, Sevilla',
-                'shipping_address' => 'Calle de las Flores 147, Sevilla',
-                'shipped_at' => null,
-                'payment_method' => 'bizum',
-                'created_at' => '2026-04-14 15:30:45',
-                'updated_at' => '2026-04-14 16:00:00',
-            ],
-            [
-                'status' => 'pending',
-                'user_id' => 2,
-                'installation_address' => 'Avenida de la Constitución 258, Córdoba',
-                'shipping_address' => 'Avenida de la Constitución 258, Córdoba',
-                'shipped_at' => null,
-                'payment_method' => 'card',
-                'created_at' => '2026-04-15 10:45:20',
-                'updated_at' => '2026-04-15 11:30:00',
-            ],
-            [
-                'status' => 'shipped',
-                'user_id' => 1,
-                'installation_address' => 'Calle Real 369, Granada',
-                'shipping_address' => 'Calle Real 369, Granada',
-                'shipped_at' => '2026-04-16 14:15:30',
-                'payment_method' => 'paypal',
-                'created_at' => '2026-04-15 12:00:00',
-                'updated_at' => '2026-04-16 14:30:00',
-            ],
-            [
-                'status' => 'installation_confirmed',
-                'user_id' => 2,
-                'installation_address' => 'Plaza de España 741, Zaragoza',
-                'shipping_address' => 'Plaza de España 741, Zaragoza',
-                'shipped_at' => '2026-04-17 08:50:15',
-                'payment_method' => 'bizum',
-                'created_at' => '2026-04-16 07:20:00',
-                'updated_at' => '2026-04-17 09:00:00',
-            ],
-            [
-                'status' => 'in_cart',
-                'user_id' => 1,
-                'installation_address' => 'Calle Principal 1, Barcelona',
-                'shipping_address' => 'Calle Principal 1, Barcelona',
-                'shipped_at' => null,
-                'payment_method' => 'card',
-                'created_at' => '2026-04-18 10:00:00',
-                'updated_at' => '2026-04-18 10:00:00',
-            ],
+        $faker = \Faker\Factory::create('es_ES');
+        $users = User::all();
 
-        ];
+        if ($users->isEmpty()) {
+            return;
+        }
 
-        foreach ($orders as $orderData) {
-            Order::create($orderData);
+        $statuses = ['in_cart', 'pending', 'shipped', 'installation_confirmed'];
+        $paymentMethods = ['paypal', 'card', 'bizum'];
+
+        // Crear 15 pedidos aleatorios
+        for ($i = 0; $i < 15; $i++) {
+            $user = $users->random();
+            $status = $faker->randomElement($statuses);
+            
+            // Datos del cliente (facturación)
+            $customerName = $user->name;
+            $customerLastName1 = $user->last_name_one;
+            $customerLastName2 = $user->last_name_second;
+            $customerDni = $user->dni;
+            $customerEmail = $user->email;
+            $customerPhone = $user->phone;
+            
+            // Direcciones
+            $billingAddress = $user->billing_address ?? $faker->streetAddress();
+            $billingZip = $user->billing_zip_code ?? $faker->postcode();
+            $billingProvince = $user->billing_province ?? $faker->state();
+            
+            $shippingAddress = $user->shipping_address ?? $faker->streetAddress();
+            $shippingZip = $user->shipping_zip_code ?? $faker->postcode();
+            $shippingProvince = $user->shipping_province ?? $faker->state();
+            
+            $installationAddress = $faker->streetAddress();
+            $installationZip = $faker->postcode();
+            $installationProvince = $faker->state();
+
+            Order::create([
+                'status' => $status,
+                'user_id' => $user->id,
+                'customer_name' => $customerName,
+                'customer_last_name_one' => $customerLastName1,
+                'customer_last_name_second' => $customerLastName2,
+                'customer_dni' => $customerDni,
+                'customer_phone' => $customerPhone,
+                'customer_email' => $customerEmail,
+                'customer_address' => $billingAddress,
+                'customer_zip_code' => $billingZip,
+                'customer_province' => $billingProvince,
+                'customer_country' => 'España',
+                'shipping_address' => $shippingAddress,
+                'shipping_zip_code' => $shippingZip,
+                'shipping_province' => $shippingProvince,
+                'shipping_country' => 'España',
+                'installation_address' => $installationAddress,
+                'installation_zip_code' => $installationZip,
+                'installation_province' => $installationProvince,
+                'installation_country' => 'España',
+                'shipped_at' => ($status === 'shipped' || $status === 'installation_confirmed') ? now()->subDays(rand(1, 5)) : null,
+                'payment_method' => $faker->randomElement($paymentMethods),
+                'created_at' => now()->subDays(rand(6, 30)),
+                'updated_at' => now()->subDays(rand(0, 5)),
+            ]);
         }
     }
 }

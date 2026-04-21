@@ -178,8 +178,9 @@ body {
             <td width="50%">
                 <div class="section-title">Facturar a:</div>
                 <div class="customer-info">
-                    {{ $invoice->customer->name }} {{ $invoice->customer->last_name_one }} {{ $invoice->customer->last_name_second }} {{ $invoice->customer->zip_code }}<br>
+                    {{ $invoice->customer->name }} {{ $invoice->customer->last_name_one }} {{ $invoice->customer->last_name_second }}<br>
                     {{ $invoice->customer->address }}<br>
+                    {{ $invoice->customer->zip_code }} {{ $invoice->customer->province }}<br>
                     {{ $invoice->customer->country }}<br>
                     DNI: {{ $invoice->customer->dni }}<br>
                     E-Mail: {{ $invoice->customer->email }}
