@@ -69,7 +69,7 @@ Route::get('/categories/{id}', [CategoryController::class, 'show']);
 // Rutas de productos - PÚBLICAS
 Route::get('/products', [ProductController::class, 'index']);
 Route::get('/products/important', [ProductController::class, 'getImportantProducts']);
-Route::get('/products/{id}', [ProductController::class, 'show']);
+Route::get('/products/{id}', [ProductController::class, 'show'])->whereNumber('id');
 
 // Rutas de búsqueda - PÚBLICAS
 Route::get('/search', [App\Http\Controllers\Api\SearchController::class, 'search']);
