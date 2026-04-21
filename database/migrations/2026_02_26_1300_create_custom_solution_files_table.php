@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('custom_solution_id')->constrained('custom_solutions')->onDelete('cascade');
             $table->string('file_path');
+            $table->string('original_name')->nullable();
             $table->timestamps();
         });
     }

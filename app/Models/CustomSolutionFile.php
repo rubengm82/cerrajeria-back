@@ -13,6 +13,7 @@ class CustomSolutionFile extends Model
     protected $fillable = [
         'custom_solution_id',
         'file_path',
+        'original_name',
     ];
 
     /**

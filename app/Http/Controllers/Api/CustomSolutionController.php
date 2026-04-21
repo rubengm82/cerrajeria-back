@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\CustomSolution;
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 
@@ -38,7 +39,7 @@ class CustomSolutionController extends Controller
             'description' => 'required|string',
             'status' => 'nullable|in:' . CustomSolution::STATUS_NEW,
             'images' => 'nullable|array|max:3',
-            'images.*' => 'image|max:2048',
+            'images.*' => 'file|mimes:jpg,jpeg,png,bmp,gif,svg,webp,pdf,doc,docx,odt,xls,xlsx|max:2048',
         ]);
 
         $customSolution = CustomSolution::create([
@@ -48,11 +49,16 @@ class CustomSolutionController extends Controller
             'status' => $validated['status'] ?? CustomSolution::STATUS_NEW,
         ]);
 
-        foreach ($request->file('images', []) as $image) {
-            $path = $image->store('custom-solutions', 'public');
+        foreach ($request->file('images', []) as $file) {
+            $path = $file->store('custom-solutions', 'public');
+            $originalName = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
+            $extension = $file->getClientOriginalExtension();
+            $uploadedAt = now()->format('Ymd_His');
+            $displayName = Str::slug($originalName) . '_' . $uploadedAt . ($extension ? '.' . $extension : '');
 
             $customSolution->files()->create([
                 'file_path' => $path,
+                'original_name' => $displayName,
             ]);
         }
 
