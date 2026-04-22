@@ -37,10 +37,10 @@ class CategoryController extends Controller
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:255', Rule::unique('categories')->where(function ($query) use ($request) { return $query->whereRaw('LOWER(name) = ?', [strtolower($request->name)]); })],
             'is_important_to_show' => 'required|boolean',
-            'image' => 'required|image|max:2048',
+            'image' => 'nullable|image|max:2048',
         ]);
-        // Se sube la imagen
-        $image = $request->file('image')->store('categories', 'public');
+        // Se sube la imagen al disco public en la carpeta categories si existe
+        $image = $request->hasFile('image') ? $request->file('image')->store('categories', 'public') : null;
 
         $category = Category::create(['name' => $validated['name'], 'is_important_to_show' => $validated['is_important_to_show'], 'image' => $image]);
         return response()->json($category, 201);
@@ -61,9 +61,6 @@ class CategoryController extends Controller
         return response()->json($importantCategories);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, int $id): JsonResponse
     {
         $category = Category::findOrFail($id);
@@ -74,14 +71,23 @@ class CategoryController extends Controller
             'image' => 'nullable|image|max:2048',
         ]);
 
-        // Se borrar imagen anterior si existe
+        // Si se recibe una nueva imagen
         if ($request->hasFile('image')) {
+            // Eliminar la imagen anterior si existe
             if ($category->image && Storage::disk('public')->exists($category->image)) {
                 Storage::disk('public')->delete($category->image);
             }
-            // Se guarda la nueva imagen
+            // Guardar la nueva imagen
             $validated['image'] = $request->file('image')->store('categories', 'public');
+        } 
+        // Si el usuario marcó explícitamente para eliminar la imagen
+        else if ($request->input('remove_image') == '1') {
+            if ($category->image && Storage::disk('public')->exists($category->image)) {
+                Storage::disk('public')->delete($category->image);
+            }
+            $validated['image'] = null;
         }
+
         $category->update($validated);
         return response()->json($category);
     }

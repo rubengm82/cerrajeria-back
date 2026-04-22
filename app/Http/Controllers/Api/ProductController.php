@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Product;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class ProductController extends Controller
 {
@@ -162,7 +163,15 @@ class ProductController extends Controller
      */
     public function forceDelete(int $id): JsonResponse
     {
-        $product = Product::onlyTrashed()->findOrFail($id);
+        $product = Product::onlyTrashed()->with('images')->findOrFail($id);
+
+        // Eliminar archivos físicos de las imágenes asociadas
+        foreach ($product->images as $image) {
+            if ($image->path && Storage::disk('public')->exists($image->path)) {
+                Storage::disk('public')->delete($image->path);
+            }
+        }
+
         $product->forceDelete();
 
         return response()->json(['message' => 'Product permanently deleted']);

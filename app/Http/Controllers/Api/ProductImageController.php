@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\ProductImageFile;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Storage;
 
 class ProductImageController extends Controller
 {
@@ -59,7 +60,16 @@ class ProductImageController extends Controller
         $validated = $request->validate([
             'product_id' => 'sometimes|exists:products,id',
             'is_important' => 'nullable|boolean',
+            'image' => 'nullable|image|max:2048',
         ]);
+
+        if ($request->hasFile('image')) {
+            // Eliminar imagen anterior
+            if ($image->path && Storage::disk('public')->exists($image->path)) {
+                Storage::disk('public')->delete($image->path);
+            }
+            $validated['path'] = $request->file('image')->store('products', 'public');
+        }
 
         $image->update($validated);
         return response()->json($image);
@@ -71,6 +81,12 @@ class ProductImageController extends Controller
     public function destroy(int $id): JsonResponse
     {
         $image = ProductImageFile::findOrFail($id);
+
+        // Eliminar el archivo del storage
+        if ($image->path && Storage::disk('public')->exists($image->path)) {
+            Storage::disk('public')->delete($image->path);
+        }
+
         $image->delete();
         return response()->json(['message' => 'Image deleted successfully']);
     }

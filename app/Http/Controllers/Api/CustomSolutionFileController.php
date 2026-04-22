@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\CustomSolutionFile;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Storage;
 
 class CustomSolutionFileController extends Controller
 {
@@ -63,6 +64,12 @@ class CustomSolutionFileController extends Controller
     public function destroy(int $id): JsonResponse
     {
         $file = CustomSolutionFile::findOrFail($id);
+
+        // Eliminar el archivo del storage
+        if ($file->file_path && Storage::disk('public')->exists($file->file_path)) {
+            Storage::disk('public')->delete($file->file_path);
+        }
+
         $file->delete();
         return response()->json(['message' => 'File deleted successfully']);
     }

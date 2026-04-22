@@ -7,6 +7,7 @@ use App\Models\CustomSolution;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Storage;
 
 class CustomSolutionController extends Controller
 {
@@ -126,7 +127,15 @@ class CustomSolutionController extends Controller
      */
     public function forceDelete(int $id): JsonResponse
     {
-        $customSolution = CustomSolution::withTrashed()->findOrFail($id);
+        $customSolution = CustomSolution::withTrashed()->with('files')->findOrFail($id);
+
+        // Eliminar archivos físicos de las imágenes asociadas
+        foreach ($customSolution->files as $file) {
+            if ($file->file_path && Storage::disk('public')->exists($file->file_path)) {
+                Storage::disk('public')->delete($file->file_path);
+            }
+        }
+
         $customSolution->forceDelete();
         return response()->json(['message' => 'Custom solution permanently deleted']);
     }

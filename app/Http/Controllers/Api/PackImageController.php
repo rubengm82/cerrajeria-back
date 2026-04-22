@@ -60,11 +60,20 @@ class PackImageController extends Controller
         $validated = $request->validate([
             'pack_id' => 'sometimes|exists:packs,id',
             'is_important' => 'nullable|boolean',
+            'image' => 'nullable|image|max:2048',
         ]);
 
         if (isset($validated['pack_id'])) {
             $validated['packs_id'] = $validated['pack_id'];
             unset($validated['pack_id']);
+        }
+
+        if ($request->hasFile('image')) {
+            // Eliminar imagen anterior
+            if ($image->path && Storage::disk('public')->exists($image->path)) {
+                Storage::disk('public')->delete($image->path);
+            }
+            $validated['path'] = $request->file('image')->store('packs', 'public');
         }
 
         $image->update($validated);

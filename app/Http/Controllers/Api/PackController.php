@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Pack;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Storage;
 
 class PackController extends Controller
 {
@@ -135,7 +136,15 @@ class PackController extends Controller
      */
     public function forceDelete(int $id): JsonResponse
     {
-        $pack = Pack::onlyTrashed()->findOrFail($id);
+        $pack = Pack::onlyTrashed()->with('images')->findOrFail($id);
+
+        // Eliminar archivos físicos de las imágenes asociadas
+        foreach ($pack->images as $image) {
+            if ($image->path && Storage::disk('public')->exists($image->path)) {
+                Storage::disk('public')->delete($image->path);
+            }
+        }
+
         $pack->forceDelete();
         return response()->json(['message' => 'Pack permanently deleted']);
     }
