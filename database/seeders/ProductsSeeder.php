@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use App\Models\Category;
 use App\Models\Feature;
 use App\Models\Product;
+use App\Models\ProductImageFile;
 use Illuminate\Database\Seeder;
 
 class ProductsSeeder extends Seeder
@@ -39,6 +40,7 @@ class ProductsSeeder extends Seeder
                 'is_important_to_show' => true,
                 'price_keys' => 0,
                 'is_active' => true,
+                'image_paths' => ['products/securemme/DSC_0012.JPG'],
                 'feature_values' => [
                     $features['Marca']['Securemme'],
                     $features['Mida Interior']['30 mm'],
@@ -62,6 +64,7 @@ class ProductsSeeder extends Seeder
                 'is_important_to_show' => true,
                 'price_keys' => 0,
                 'is_active' => true,
+                'image_paths' => ['products/securemme/DSC_0013.JPG'],
                 'feature_values' => [
                     $features['Marca']['Securemme'],
                     $features['Mida Interior']['30 mm'],
@@ -85,6 +88,7 @@ class ProductsSeeder extends Seeder
                 'is_important_to_show' => true,
                 'price_keys' => 0,
                 'is_active' => true,
+                'image_paths' => ['products/securemme/DSC_0027.JPG'],
                 'feature_values' => [
                     $features['Marca']['Securemme'],
                     $features['Mida Interior']['30 mm'],
@@ -108,6 +112,7 @@ class ProductsSeeder extends Seeder
                 'is_important_to_show' => true,
                 'price_keys' => 0,
                 'is_active' => true,
+                'image_paths' => ['products/securemme/DSC_0028.JPG'],
                 'feature_values' => [
                     $features['Marca']['Securemme'],
                     $features['Mida Interior']['30 mm'],
@@ -131,6 +136,7 @@ class ProductsSeeder extends Seeder
                 'is_important_to_show' => true,
                 'price_keys' => 0,
                 'is_active' => true,
+                'image_paths' => ['products/securemme/DSC_0029.JPG'],
                 'feature_values' => [
                     $features['Marca']['Securemme'],
                     $features['Mida Interior']['30 mm'],
@@ -154,6 +160,7 @@ class ProductsSeeder extends Seeder
                 'is_important_to_show' => true,
                 'price_keys' => 0,
                 'is_active' => true,
+                'image_paths' => ['products/securemme/DSC_0030.JPG'],
                 'feature_values' => [
                     $features['Marca']['Securemme'],
                     $features['Mida Interior']['30 mm'],
@@ -177,6 +184,7 @@ class ProductsSeeder extends Seeder
                 'is_important_to_show' => true,
                 'price_keys' => 0,
                 'is_active' => true,
+                'image_paths' => ['products/securemme/DSC_0031.JPG'],
                 'feature_values' => [
                     $features['Marca']['Securemme'],
                     $features['Mida Interior']['30 mm'],
@@ -200,6 +208,7 @@ class ProductsSeeder extends Seeder
                 'is_important_to_show' => true,
                 'price_keys' => 0,
                 'is_active' => true,
+                'image_paths' => ['products/securemme/DSC_0032.JPG'],
                 'feature_values' => [
                     $features['Marca']['Securemme'],
                     $features['Mida Interior']['30 mm'],
@@ -224,6 +233,7 @@ class ProductsSeeder extends Seeder
                 'is_important_to_show' => false,
                 'price_keys' => 0,
                 'is_active' => true,
+                'image_paths' => ['products/mc/DSC_0002.JPG', 'products/mc/DSC_0017.JPG'],
                 'feature_values' => [
                     $features['Marca']['M&C'],
                     $features['Mida Interior']['32 mm'],
@@ -247,6 +257,7 @@ class ProductsSeeder extends Seeder
                 'is_important_to_show' => false,
                 'price_keys' => 0,
                 'is_active' => true,
+                'image_paths' => ['products/mc/DSC_0003.JPG'],
                 'feature_values' => [
                     $features['Marca']['M&C'],
                     $features['Mida Interior']['32 mm'],
@@ -271,6 +282,7 @@ class ProductsSeeder extends Seeder
                 'is_important_to_show' => false,
                 'price_keys' => 0,
                 'is_active' => true,
+                'image_paths' => ['products/keso/DSC_0005.JPG'],
                 'feature_values' => [
                     $features['Marca']['Keso'],
                     $features['Mida Interior']['30 mm'],
@@ -294,6 +306,7 @@ class ProductsSeeder extends Seeder
                 'is_important_to_show' => false,
                 'price_keys' => 0,
                 'is_active' => true,
+                'image_paths' => ['products/keso/DSC_0006.JPG'],
                 'feature_values' => [
                     $features['Marca']['Keso'],
                     $features['Mida Interior']['30 mm'],
@@ -318,6 +331,7 @@ class ProductsSeeder extends Seeder
                 'is_important_to_show' => false,
                 'price_keys' => 0,
                 'is_active' => true,
+                'image_paths' => ['products/securemme/DSC_0033.JPG'],
                 'feature_values' => [
                     $features['Marca']['Abus'],
                     $features['Color']['Plata'],
@@ -336,6 +350,7 @@ class ProductsSeeder extends Seeder
                 'is_important_to_show' => false,
                 'price_keys' => 0,
                 'is_active' => true,
+                'image_paths' => ['products/securemme/DSC_0034.JPG'],
                 'feature_values' => [
                     $features['Marca']['Abus'],
                     $features['Color']['Daurat'],
@@ -355,6 +370,7 @@ class ProductsSeeder extends Seeder
                 'is_important_to_show' => false,
                 'price_keys' => 0,
                 'is_active' => true,
+                'image_paths' => ['products/mc/DSC_0004.JPG'],
                 'feature_values' => [
                     $features['Marca']['DMC'],
                     $features['Color']['Plata'],
@@ -373,6 +389,7 @@ class ProductsSeeder extends Seeder
                 'is_important_to_show' => false,
                 'price_keys' => 0,
                 'is_active' => true,
+                'image_paths' => ['products/mc/DSC_0009.JPG'],
                 'feature_values' => [
                     $features['Marca']['DMC'],
                     $features['Color']['Daurat'],
@@ -392,6 +409,7 @@ class ProductsSeeder extends Seeder
                 'is_important_to_show' => false,
                 'price_keys' => 0,
                 'is_active' => true,
+                'image_paths' => ['products/mc/DSC_0010.JPG'],
                 'feature_values' => [
                     $features['Marca']['DMC'],
                     $features['Color']['Plata'],
@@ -410,6 +428,7 @@ class ProductsSeeder extends Seeder
                 'is_important_to_show' => false,
                 'price_keys' => 0,
                 'is_active' => true,
+                'image_paths' => ['products/mc/DSC_0011.JPG'],
                 'feature_values' => [
                     $features['Marca']['DMC'],
                     $features['Color']['Daurat'],
@@ -429,6 +448,7 @@ class ProductsSeeder extends Seeder
                 'is_important_to_show' => false,
                 'price_keys' => 0,
                 'is_active' => true,
+                'image_paths' => ['products/keso/DSC_0007.JPG'],
                 'feature_values' => [
                     $features['Marca']['Disec'],
                     $features['Color']['Plata'],
@@ -447,6 +467,7 @@ class ProductsSeeder extends Seeder
                 'is_important_to_show' => false,
                 'price_keys' => 0,
                 'is_active' => true,
+                'image_paths' => ['products/keso/DSC_0008.JPG'],
                 'feature_values' => [
                     $features['Marca']['Disec'],
                     $features['Color']['Daurat'],
@@ -465,6 +486,7 @@ class ProductsSeeder extends Seeder
                 'is_important_to_show' => false,
                 'price_keys' => 0,
                 'is_active' => true,
+                'image_paths' => ['products/keso/DSC_0014.JPG'],
                 'feature_values' => [
                     $features['Marca']['Disec'],
                     $features['Color']['Plata'],
@@ -483,6 +505,7 @@ class ProductsSeeder extends Seeder
                 'is_important_to_show' => false,
                 'price_keys' => 0,
                 'is_active' => true,
+                'image_paths' => ['products/keso/DSC_0015.JPG'],
                 'feature_values' => [
                     $features['Marca']['Disec'],
                     $features['Color']['Daurat'],
@@ -501,6 +524,7 @@ class ProductsSeeder extends Seeder
                 'is_important_to_show' => false,
                 'price_keys' => 0,
                 'is_active' => true,
+                'image_paths' => ['products/keso/DSC_0018.JPG'],
                 'feature_values' => [
                     $features['Marca']['Disec'],
                     $features['Color']['Plata'],
@@ -519,6 +543,7 @@ class ProductsSeeder extends Seeder
                 'is_important_to_show' => false,
                 'price_keys' => 0,
                 'is_active' => true,
+                'image_paths' => ['products/keso/DSC_0019.JPG'],
                 'feature_values' => [
                     $features['Marca']['Disec'],
                     $features['Color']['Daurat'],
@@ -537,6 +562,7 @@ class ProductsSeeder extends Seeder
                 'is_important_to_show' => false,
                 'price_keys' => 0,
                 'is_active' => true,
+                'image_paths' => ['products/keso/DSC_0020.JPG'],
                 'feature_values' => [
                     $features['Marca']['Disec'],
                     $features['Color']['Plata'],
@@ -557,6 +583,7 @@ class ProductsSeeder extends Seeder
                 'is_important_to_show' => false,
                 'price_keys' => 0,
                 'is_active' => true,
+                'image_paths' => ['products/keso/DSC_0021.JPG'],
                 'feature_values' => [
                     $features['Marca']['Disec'],
                     $features['Color']['Daurat'],
@@ -577,6 +604,7 @@ class ProductsSeeder extends Seeder
                 'is_important_to_show' => false,
                 'price_keys' => 0,
                 'is_active' => true,
+                'image_paths' => ['products/keso/DSC_0022.JPG'],
                 'feature_values' => [
                     $features['Marca']['Disec'],
                     $features['Color']['Plata'],
@@ -597,6 +625,7 @@ class ProductsSeeder extends Seeder
                 'is_important_to_show' => false,
                 'price_keys' => 0,
                 'is_active' => true,
+                'image_paths' => ['products/mc/DSC_0016.JPG'],
                 'feature_values' => [
                     $features['Marca']['Disec'],
                     $features['Color']['Daurat'],
@@ -618,6 +647,7 @@ class ProductsSeeder extends Seeder
                 'is_important_to_show' => false,
                 'price_keys' => 0,
                 'is_active' => true,
+                'image_paths' => ['products/mc/DSC_0023.JPG', 'products/mc/DSC_0025.JPG'],
                 'feature_values' => [
                     $features['Marca']['M&C'],
                     $features['Color']['Plata'],
@@ -638,6 +668,7 @@ class ProductsSeeder extends Seeder
                 'is_important_to_show' => false,
                 'price_keys' => 0,
                 'is_active' => true,
+                'image_paths' => ['products/mc/DSC_0024.JPG', 'products/mc/DSC_0026.JPG'],
                 'feature_values' => [
                     $features['Marca']['M&C'],
                     $features['Color']['Plata'],
@@ -650,7 +681,9 @@ class ProductsSeeder extends Seeder
 
         foreach ($products as $productData) {
             $featureValues = $productData['feature_values'] ?? [];
+            $imagePaths = $productData['image_paths'] ?? [];
             unset($productData['feature_values']);
+            unset($productData['image_paths']);
 
             // Usar name como clave única
             $product = Product::updateOrCreate(
@@ -661,6 +694,18 @@ class ProductsSeeder extends Seeder
             // Adjuntar las características al producto
             if (! empty($featureValues)) {
                 $product->features()->sync($featureValues);
+            }
+
+            foreach ($imagePaths as $index => $path) {
+                ProductImageFile::updateOrCreate(
+                    [
+                        'product_id' => $product->id,
+                        'path' => $path,
+                    ],
+                    [
+                        'is_important' => $index === 0,
+                    ]
+                );
             }
         }
     }
