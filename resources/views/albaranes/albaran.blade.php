@@ -184,6 +184,7 @@ body {
                     {{ $albaran->customer->country }}<br>
                     DNI: {{ $albaran->customer->dni }}<br>
                     E-Mail: {{ $albaran->customer->email }}
+                    Telf: {{ $albaran->customer->phone }}
                 </div>
             </td>
             <td width="50%">
