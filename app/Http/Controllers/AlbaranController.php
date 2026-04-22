@@ -2,10 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Barryvdh\DomPDF\Facade\Pdf;
 use App\Models\Order;
+use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Support\Facades\Auth;
 
 class AlbaranController extends Controller
 {
@@ -31,7 +30,7 @@ class AlbaranController extends Controller
         $pdf->setPaper('a4', 'portrait');
 
         // Return PDF download
-        return $pdf->download('albaran-' . $order->id . '.pdf');
+        return $pdf->download('albaran-'.$order->id.'.pdf');
     }
 
     private function prepareAlbaranData($order)
@@ -60,7 +59,7 @@ class AlbaranController extends Controller
             $subtotal += $total;
 
             $items[] = (object) [
-                'description' => 'Pack: ' . $pack->name,
+                'description' => 'Pack: '.$pack->name,
                 'quantity' => $quantity,
                 'unit_price' => $unitPrice,
                 'total' => $total,
@@ -71,7 +70,7 @@ class AlbaranController extends Controller
         $taxAmount = $subtotal * ($taxRate / 100);
 
         return (object) [
-            'number' => 'ALB-' . str_pad($order->id, 6, '0', STR_PAD_LEFT),
+            'number' => 'ALB-'.str_pad($order->id, 6, '0', STR_PAD_LEFT),
             'date' => $order->created_at,
             'due_date' => $order->created_at->addDays(30),
 
@@ -85,6 +84,7 @@ class AlbaranController extends Controller
                 'province' => $order->customer_province ?? $order->user->billing_province ?? '',
                 'country' => $order->customer_country ?? $order->user->billing_country ?? 'España',
                 'email' => $order->customer_email ?? $order->user->email ?? '',
+                'phone' => $order->customer_phone ?? $order->user->phone ?? '',
             ],
 
             'items' => $items,

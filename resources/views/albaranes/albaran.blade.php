@@ -183,7 +183,7 @@ body {
                     {{ $albaran->customer->zip_code }} {{ $albaran->customer->province }}<br>
                     {{ $albaran->customer->country }}<br>
                     DNI: {{ $albaran->customer->dni }}<br>
-                    E-Mail: {{ $albaran->customer->email }}
+                    E-Mail: {{ $albaran->customer->email }}<br>
                     Telf: {{ $albaran->customer->phone }}
                 </div>
             </td>
