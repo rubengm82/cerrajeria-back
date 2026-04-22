@@ -3,11 +3,13 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\CommerceSetting;
 use App\Models\Order;
 use App\Models\Pack;
 use App\Models\Product;
-use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 
@@ -18,7 +20,7 @@ class OrderController extends Controller
      */
     public function index(): JsonResponse
     {
-        $user = auth()->user();
+        $user = Auth::user();
 
         // Si el usuario es admin, mostrar todas las órdenes
         if ($user->role === 'admin' || $user->role === 1) {
@@ -26,8 +28,8 @@ class OrderController extends Controller
         } else {
             // Si es usuario normal, mostrar solo sus órdenes
             $orders = Order::with(['user', 'products', 'packs'])
-                          ->where('user_id', $user->id)
-                          ->get();
+                ->where('user_id', $user->id)
+                ->get();
         }
 
         return response()->json($orders);
@@ -38,7 +40,7 @@ class OrderController extends Controller
      */
     public function indexWithTrashed(): JsonResponse
     {
-        $user = auth()->user();
+        $user = Auth::user();
 
         // Si el usuario es admin, mostrar todas las órdenes incluyendo eliminadas
         if ($user->role === 'admin' || $user->role === 1) {
@@ -46,8 +48,8 @@ class OrderController extends Controller
         } else {
             // Si es usuario normal, mostrar solo sus órdenes incluyendo eliminadas
             $orders = Order::withTrashed()->with(['user', 'products', 'packs'])
-                          ->where('user_id', $user->id)
-                          ->get();
+                ->where('user_id', $user->id)
+                ->get();
         }
 
         return response()->json($orders);
@@ -58,7 +60,7 @@ class OrderController extends Controller
      */
     public function cart(): JsonResponse
     {
-        $user = auth()->user();
+        $user = Auth::user();
 
         $order = Order::with(['products.category', 'products.images', 'packs.images', 'packs.products'])
             ->where('user_id', $user->id)
@@ -77,9 +79,10 @@ class OrderController extends Controller
         $validated = $request->validate([
             'product_id' => 'required|exists:products,id',
             'quantity' => 'required|integer|min:1',
+            'installation_requested' => 'nullable|boolean',
         ]);
 
-        $user = auth()->user();
+        $user = Auth::user();
         $product = Product::findOrFail($validated['product_id']);
 
         $order = Order::where('user_id', $user->id)
@@ -87,7 +90,7 @@ class OrderController extends Controller
             ->latest()
             ->first();
 
-        if (!$order) {
+        if (! $order) {
             $order = Order::create([
                 'user_id' => $user->id,
                 'status' => 'in_cart',
@@ -121,6 +124,7 @@ class OrderController extends Controller
 
         $order->products()->attach($validated['product_id'], [
             'quantity' => $validated['quantity'],
+            'installation_requested' => $product->is_installable && (bool) ($validated['installation_requested'] ?? false),
         ]);
 
         $order->load(['products.category', 'products.images', 'packs.images', 'packs.products']);
@@ -141,7 +145,7 @@ class OrderController extends Controller
             'quantity' => 'required|integer|min:1',
         ]);
 
-        $user = auth()->user();
+        $user = Auth::user();
         $pack = Pack::with('products')->findOrFail($validated['pack_id']);
         $availableStock = $pack->products->min('stock') ?? 0;
 
@@ -156,7 +160,7 @@ class OrderController extends Controller
             ->latest()
             ->first();
 
-        if (!$order) {
+        if (! $order) {
             $order = Order::create([
                 'user_id' => $user->id,
                 'status' => 'in_cart',
@@ -204,9 +208,10 @@ class OrderController extends Controller
             'items.*.type' => 'required|in:product,pack',
             'items.*.id' => 'required|integer',
             'items.*.quantity' => 'required|integer|min:1',
+            'items.*.installation_requested' => 'nullable|boolean',
         ]);
 
-        $user = auth()->user();
+        $user = Auth::user();
         $skippedItems = [];
 
         $order = Order::where('user_id', $user->id)
@@ -214,7 +219,7 @@ class OrderController extends Controller
             ->latest()
             ->first();
 
-        if (!$order) {
+        if (! $order) {
             $order = Order::create([
                 'user_id' => $user->id,
                 'status' => 'in_cart',
@@ -244,8 +249,9 @@ class OrderController extends Controller
     {
         $product = Product::find($item['id']);
 
-        if (!$product || $product->stock <= 0) {
+        if (! $product || $product->stock <= 0) {
             $skippedItems[] = $item;
+
             return;
         }
 
@@ -258,6 +264,11 @@ class OrderController extends Controller
             if ((int) $currentProduct->pivot->quantity < $quantity) {
                 $order->products()->updateExistingPivot($product->id, [
                     'quantity' => $quantity,
+                    'installation_requested' => $product->is_installable && (bool) ($item['installation_requested'] ?? false),
+                ]);
+            } elseif (array_key_exists('installation_requested', $item)) {
+                $order->products()->updateExistingPivot($product->id, [
+                    'installation_requested' => $product->is_installable && (bool) $item['installation_requested'],
                 ]);
             }
 
@@ -266,6 +277,7 @@ class OrderController extends Controller
 
         $order->products()->attach($product->id, [
             'quantity' => $quantity,
+            'installation_requested' => $product->is_installable && (bool) ($item['installation_requested'] ?? false),
         ]);
     }
 
@@ -274,8 +286,9 @@ class OrderController extends Controller
         $pack = Pack::with('products')->find($item['id']);
         $availableStock = $pack?->products->min('stock') ?? 0;
 
-        if (!$pack || $availableStock <= 0) {
+        if (! $pack || $availableStock <= 0) {
             $skippedItems[] = $item;
+
             return;
         }
 
@@ -328,12 +341,13 @@ class OrderController extends Controller
             'items.*.type' => 'required|in:product,pack',
             'items.*.id' => 'required|integer',
             'items.*.quantity' => 'required|integer|min:1',
+            'items.*.installation_requested' => 'nullable|boolean',
         ]);
 
         DB::beginTransaction();
 
         try {
-            $user = auth()->user();
+            $user = Auth::user();
             $customer = $validated['customer'];
             $orderData = $validated['order'];
             $productItems = [];
@@ -343,7 +357,11 @@ class OrderController extends Controller
                 if ($item['type'] === 'pack') {
                     $packItems[$item['id']] = ['quantity' => $item['quantity']];
                 } else {
-                    $productItems[$item['id']] = ['quantity' => $item['quantity']];
+                    $product = Product::findOrFail($item['id']);
+                    $productItems[$item['id']] = [
+                        'quantity' => $item['quantity'],
+                        'installation_requested' => $product->is_installable && (bool) ($item['installation_requested'] ?? false),
+                    ];
                 }
             }
 
@@ -371,6 +389,8 @@ class OrderController extends Controller
                 'shipping_zip_code' => $orderData['shipping_zip_code'] ?? null,
                 'shipping_province' => $orderData['shipping_province'] ?? null,
                 'shipping_country' => $orderData['shipping_country'] ?? 'España',
+                'shipping_price' => CommerceSetting::current()->shipping_price,
+                'installation_price' => $this->getInstallationPrice($productItems, $packItems),
                 'payment_method' => $orderData['payment_method'],
             ]);
 
@@ -397,6 +417,7 @@ class OrderController extends Controller
         foreach ($order->products as $product) {
             $productItems[$product->id] = [
                 'quantity' => (int) $product->pivot->quantity,
+                'installation_requested' => (bool) $product->pivot->installation_requested,
             ];
         }
 
@@ -408,6 +429,46 @@ class OrderController extends Controller
 
         $this->reserveProductStockItems($productItems);
         $this->reservePackStockItems($packItems);
+    }
+
+    private function getInstallationPrice(array $productItems, array $packItems): float
+    {
+        $hasInstallation = collect($productItems)->contains(fn ($item) => (bool) ($item['installation_requested'] ?? false));
+
+        if (! $hasInstallation) {
+            return 0;
+        }
+
+        $subtotal = 0;
+
+        foreach ($productItems as $productId => $item) {
+            $product = Product::findOrFail($productId);
+            $subtotal += $this->getProductSalePrice($product) * (int) $item['quantity'];
+        }
+
+        foreach ($packItems as $packId => $item) {
+            $pack = Pack::findOrFail($packId);
+            $subtotal += (float) $pack->total_price * (int) $item['quantity'];
+        }
+
+        foreach (CommerceSetting::current()->installation_rules ?? [] as $rule) {
+            $min = (float) ($rule['min_subtotal'] ?? 0);
+            $max = $rule['max_subtotal'] ?? null;
+
+            if ($subtotal >= $min && ($max === null || $subtotal <= (float) $max)) {
+                return (float) ($rule['price'] ?? 0);
+            }
+        }
+
+        return 0;
+    }
+
+    private function getProductSalePrice(Product $product): float
+    {
+        $price = (float) $product->price;
+        $discount = (float) ($product->discount ?? 0);
+
+        return $discount <= 0 ? $price : $price * (1 - $discount / 100);
     }
 
     private function validateCartStock(Order $order, string $itemType, int $itemId, int $quantity): void
@@ -440,7 +501,7 @@ class OrderController extends Controller
             $packItems[$pack->id] = ['quantity' => $itemQuantity];
         }
 
-        if (!$candidateFound) {
+        if (! $candidateFound) {
             if ($itemType === 'pack') {
                 $packItems[$itemId] = ['quantity' => $quantity];
             } else {
@@ -527,9 +588,10 @@ class OrderController extends Controller
     {
         $validated = $request->validate([
             'quantity' => 'required|integer|min:1',
+            'installation_requested' => 'nullable|boolean',
         ]);
 
-        $user = auth()->user();
+        $user = Auth::user();
         $product = Product::findOrFail($productId);
 
         if ($validated['quantity'] > $product->stock) {
@@ -545,9 +607,13 @@ class OrderController extends Controller
 
         $this->validateCartStock($order, 'product', $productId, $validated['quantity']);
 
-        $order->products()->updateExistingPivot($productId, [
-            'quantity' => $validated['quantity'],
-        ]);
+        $pivotData = ['quantity' => $validated['quantity']];
+
+        if (array_key_exists('installation_requested', $validated)) {
+            $pivotData['installation_requested'] = $product->is_installable && (bool) $validated['installation_requested'];
+        }
+
+        $order->products()->updateExistingPivot($productId, $pivotData);
 
         $order->load(['products.category', 'products.images', 'packs.images', 'packs.products']);
 
@@ -563,7 +629,7 @@ class OrderController extends Controller
             'quantity' => 'required|integer|min:1',
         ]);
 
-        $user = auth()->user();
+        $user = Auth::user();
         $pack = Pack::with('products')->findOrFail($packId);
         $availableStock = $pack->products->min('stock') ?? 0;
 
@@ -594,7 +660,7 @@ class OrderController extends Controller
      */
     public function removeCartProduct(int $productId): JsonResponse
     {
-        $user = auth()->user();
+        $user = Auth::user();
 
         $order = Order::where('user_id', $user->id)
             ->where('status', 'in_cart')
@@ -612,7 +678,7 @@ class OrderController extends Controller
      */
     public function removeCartPack(int $packId): JsonResponse
     {
-        $user = auth()->user();
+        $user = Auth::user();
 
         $order = Order::where('user_id', $user->id)
             ->where('status', 'in_cart')
@@ -639,6 +705,7 @@ class OrderController extends Controller
         ]);
 
         $order = Order::create($validated);
+
         return response()->json($order, 201);
     }
 
@@ -648,6 +715,7 @@ class OrderController extends Controller
     public function show(int $id): JsonResponse
     {
         $order = Order::with(['user', 'products', 'packs'])->findOrFail($id);
+
         return response()->json($order);
     }
 
@@ -682,6 +750,27 @@ class OrderController extends Controller
 
             if ($order->status === 'in_cart' && $nextStatus === 'pending') {
                 $this->reserveOrderStock($order);
+                $setting = CommerceSetting::current();
+                $order->loadMissing(['products', 'packs.products']);
+
+                $productItems = [];
+                $packItems = [];
+
+                foreach ($order->products as $product) {
+                    $productItems[$product->id] = [
+                        'quantity' => (int) $product->pivot->quantity,
+                        'installation_requested' => (bool) $product->pivot->installation_requested,
+                    ];
+                }
+
+                foreach ($order->packs as $pack) {
+                    $packItems[$pack->id] = [
+                        'quantity' => (int) $pack->pivot->quantity,
+                    ];
+                }
+
+                $validated['shipping_price'] = $setting->shipping_price;
+                $validated['installation_price'] = $this->getInstallationPrice($productItems, $packItems);
             }
 
             $order->update($validated);
@@ -704,6 +793,7 @@ class OrderController extends Controller
     {
         $order = Order::findOrFail($id);
         $order->delete();
+
         return response()->json(['message' => 'Order deleted successfully']);
     }
 
@@ -713,6 +803,7 @@ class OrderController extends Controller
     public function trashed(): JsonResponse
     {
         $orders = Order::onlyTrashed()->with(['user', 'products'])->get();
+
         return response()->json($orders);
     }
 
@@ -723,6 +814,7 @@ class OrderController extends Controller
     {
         $order = Order::onlyTrashed()->findOrFail($id);
         $order->restore();
+
         return response()->json(['message' => 'Order restored successfully', 'order' => $order]);
     }
 
@@ -733,6 +825,7 @@ class OrderController extends Controller
     {
         $order = Order::onlyTrashed()->findOrFail($id);
         $order->forceDelete();
+
         return response()->json(['message' => 'Order permanently deleted']);
     }
 }

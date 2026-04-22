@@ -16,6 +16,7 @@ return new class extends Migration
             $table->foreignId('product_id')->nullable()->constrained('products')->onDelete('set null');
             $table->foreignId('order_id')->nullable()->constrained('orders')->onDelete('set null');
             $table->integer('quantity');
+            $table->boolean('installation_requested')->default(false);
             $table->timestamps();
         });
 

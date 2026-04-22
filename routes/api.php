@@ -16,6 +16,7 @@ use App\Http\Controllers\Api\PackImageController;
 use App\Http\Controllers\Api\FeatureTypeController;
 use App\Http\Controllers\Api\FeatureController;
 use App\Http\Controllers\Api\SearchController;
+use App\Http\Controllers\Api\CommerceSettingController;
 use App\Http\Controllers\AlbaranController;
 
 
@@ -43,6 +44,9 @@ Route::get('/email/verify/{id}/{hash}', [VerificationController::class, 'verify'
 // Rutas publicas de soluciones personalizadas
 Route::get('/custom-solutions', [CustomSolutionController::class, 'index']);
 Route::post('/custom-solutions', [CustomSolutionController::class, 'store']);
+
+// Configuración comercial pública para calcular totales del carrito
+Route::get('/commerce-settings', [CommerceSettingController::class, 'show']);
 
 
 
@@ -107,6 +111,7 @@ Route::post('/checkout/orders', [OrderController::class, 'checkout']);
 // Rutas de pedidos
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/reports/summary', [ReportController::class, 'summary']);
+    Route::put('/commerce-settings', [CommerceSettingController::class, 'update']);
     Route::get('/orders', [OrderController::class, 'index']);
     Route::get('/orders/with-trashed', [OrderController::class, 'indexWithTrashed']);
     Route::get('/orders/cart', [OrderController::class, 'cart']);

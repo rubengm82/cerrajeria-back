@@ -23,7 +23,6 @@ return new class extends Migration
             $table->foreignId('category_id')->nullable()->constrained('categories')->onDelete('set null');
             $table->boolean('is_installable')->default(false);
             $table->boolean('is_important_to_show')->default(false);
-            $table->decimal('installation_price', 10, 2)->nullable();
             $table->decimal('price_keys', 10, 2)->nullable();
             $table->boolean('is_active')->default(true);
             $table->timestamps();

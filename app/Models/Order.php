@@ -33,12 +33,16 @@ class Order extends Model
         'shipping_zip_code',
         'shipping_province',
         'shipping_country',
+        'shipping_price',
+        'installation_price',
         'shipped_at',
         'payment_method',
     ];
 
     protected $casts = [
         'shipped_at' => 'datetime',
+        'shipping_price' => 'decimal:2',
+        'installation_price' => 'decimal:2',
     ];
 
     /**
@@ -55,7 +59,7 @@ class Order extends Model
     public function products(): BelongsToMany
     {
         return $this->belongsToMany(Product::class, 'order_products')
-                    ->withPivot('quantity')
+                    ->withPivot('quantity', 'installation_requested')
                     ->withTimestamps();
     }
 
