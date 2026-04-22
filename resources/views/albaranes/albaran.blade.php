@@ -178,8 +178,9 @@ body {
             <td width="50%">
                 <div class="section-title">Entregar a:</div>
                 <div class="customer-info">
-                    {{ $albaran->customer->name }} {{ $albaran->customer->last_name_one }} {{ $albaran->customer->last_name_second }} {{ $albaran->customer->zip_code }}<br>
+                    {{ $albaran->customer->name }} {{ $albaran->customer->last_name_one }} {{ $albaran->customer->last_name_second }}<br>
                     {{ $albaran->customer->address }}<br>
+                    {{ $albaran->customer->zip_code }} {{ $albaran->customer->province }}<br>
                     {{ $albaran->customer->country }}<br>
                     DNI: {{ $albaran->customer->dni }}<br>
                     E-Mail: {{ $albaran->customer->email }}

@@ -23,8 +23,16 @@ return new class extends Migration
             $table->string('customer_email')->nullable();
             $table->string('customer_address')->nullable();
             $table->string('customer_zip_code')->nullable();
+            $table->string('customer_province')->nullable();
+            $table->string('customer_country')->nullable()->default('España');
             $table->string('installation_address');
+            $table->string('installation_zip_code')->nullable();
+            $table->string('installation_province')->nullable();
+            $table->string('installation_country')->nullable()->default('España');
             $table->string('shipping_address');
+            $table->string('shipping_zip_code')->nullable();
+            $table->string('shipping_province')->nullable();
+            $table->string('shipping_country')->nullable()->default('España');
             $table->timestamp('shipped_at')->nullable();
             $table->enum('payment_method', ['paypal', 'card', 'bizum']);
             $table->timestamps();
