@@ -741,12 +741,34 @@ class OrderController extends Controller
             'payment_method' => 'sometimes|in:paypal,card,bizum,bank_transfer',
             'status' => 'sometimes|in:in_cart,pending,shipped,installation_confirmed,installation_pending',
             'shipped_at' => 'nullable|date',
+            'installation_scheduled_at' => 'nullable|date',
         ]);
 
         DB::beginTransaction();
 
         try {
             $nextStatus = $validated['status'] ?? $order->status;
+
+            // Auto-set shipped_at when transitioning to shipped (if not already set)
+            if ($nextStatus === 'shipped' && is_null($order->shipped_at)) {
+                $validated['shipped_at'] = now();
+            }
+
+            // Auto-clear shipped_at when changing to pending
+            if ($nextStatus === 'pending') {
+                $validated['shipped_at'] = null;
+            }
+
+            // Auto-clear installation_scheduled_at when status changes to installation_pending
+            if ($nextStatus === 'installation_pending') {
+                $validated['installation_scheduled_at'] = null;
+            }
+
+            // Auto-set status to installation_confirmed if installation_scheduled_at is provided
+            if (isset($validated['installation_scheduled_at']) && $validated['installation_scheduled_at'] !== null) {
+                $validated['status'] = 'installation_confirmed';
+                $nextStatus = 'installation_confirmed';
+            }
 
             if ($order->status === 'in_cart' && $nextStatus === 'pending') {
                 $this->reserveOrderStock($order);
