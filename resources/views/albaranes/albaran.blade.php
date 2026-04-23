@@ -167,7 +167,7 @@ body {
                 </div>
             </td>
             <td width="40%" class="albaran-title">
-                ALBARÁN
+                ALBARÀ
             </td>
         </tr>
     </table>
@@ -190,16 +190,12 @@ body {
             <td width="50%">
                 <table class="meta-table">
                     <tr>
-                        <td class="meta-label">Albarán Nº:</td>
+                        <td class="meta-label">Albarà Nº:</td>
                         <td>{{ $albaran->number }}</td>
                     </tr>
                     <tr>
                         <td class="meta-label">Data:</td>
                         <td>{{ $albaran->date->format('d/m/Y') }}</td>
-                    </tr>
-                    <tr>
-                        <td class="meta-label">Venciment:</td>
-                        <td>{{ $albaran->due_date->format('d/m/Y') }}</td>
                     </tr>
                 </table>
             </td>
