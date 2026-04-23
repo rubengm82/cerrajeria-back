@@ -1,27 +1,25 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\AuthController;
-use App\Http\Controllers\UserController;
-use App\Http\Controllers\PasswordResetController;
-use App\Http\Controllers\VerificationController;
-use App\Http\Controllers\Api\CategoryController;
-use App\Http\Controllers\Api\ProductController;
-use App\Http\Controllers\Api\PackController;
-use App\Http\Controllers\Api\OrderController;
-use App\Http\Controllers\Api\ReportController;
-use App\Http\Controllers\Api\CustomSolutionController;
-use App\Http\Controllers\Api\ProductImageController;
-use App\Http\Controllers\Api\PackImageController;
-use App\Http\Controllers\Api\FeatureTypeController;
-use App\Http\Controllers\Api\FeatureController;
-use App\Http\Controllers\Api\SearchController;
-use App\Http\Controllers\Api\CommerceSettingController;
 use App\Http\Controllers\AlbaranController;
-
+use App\Http\Controllers\Api\CategoryController;
+use App\Http\Controllers\Api\CommerceSettingController;
+use App\Http\Controllers\Api\CustomSolutionController;
+use App\Http\Controllers\Api\FeatureController;
+use App\Http\Controllers\Api\FeatureTypeController;
+use App\Http\Controllers\Api\OrderController;
+use App\Http\Controllers\Api\PackController;
+use App\Http\Controllers\Api\PackImageController;
+use App\Http\Controllers\Api\ProductController;
+use App\Http\Controllers\Api\ProductImageController;
+use App\Http\Controllers\Api\ReportController;
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\PasswordResetController;
+use App\Http\Controllers\UserController;
+use App\Http\Controllers\VerificationController;
+use Illuminate\Support\Facades\Route;
 
 /* *************** */
-/* Rutas públicas  */
+/* Rutas públicas */
 /* *************** */
 
 // Ruta Login
@@ -48,10 +46,8 @@ Route::post('/custom-solutions', [CustomSolutionController::class, 'store']);
 // Configuración comercial pública para calcular totales del carrito
 Route::get('/commerce-settings', [CommerceSettingController::class, 'show']);
 
-
-
 /* ***************** */
-/* Rutas protegidas  */
+/* Rutas protegidas */
 /* ***************** */
 
 // Rutas de categorías - PROTEGIDAS (solo admin)
@@ -131,7 +127,6 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::delete('/orders/{id}/force', [OrderController::class, 'forceDelete']);
 });
 
-
 // Rutas de imágenes de productos
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/product-images', [ProductImageController::class, 'index']);
@@ -204,3 +199,18 @@ Route::middleware('auth:sanctum')->group(function () {
 
 // Ruta para descargar albaranes (protegida)
 Route::middleware('auth:sanctum')->get('/albaranes/{id}/download', [AlbaranController::class, 'download']);
+
+// Rutas de FAQs - PÚBLICAS (solo lectura)
+Route::get('/faqs', [App\Http\Controllers\Api\FaqController::class, 'index']);
+
+// Rutas de FAQs - PROTEGIDAS (solo admin)
+Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/faqs/with-trashed', [App\Http\Controllers\Api\FaqController::class, 'indexWithTrashed']);
+    Route::post('/faqs', [App\Http\Controllers\Api\FaqController::class, 'store']);
+    Route::get('/faqs/{id}', [App\Http\Controllers\Api\FaqController::class, 'show']);
+    Route::put('/faqs/{id}', [App\Http\Controllers\Api\FaqController::class, 'update']);
+    Route::delete('/faqs/{id}', [App\Http\Controllers\Api\FaqController::class, 'destroy']);
+    Route::get('/faqs/trashed', [App\Http\Controllers\Api\FaqController::class, 'trashed']);
+    Route::post('/faqs/{id}/restore', [App\Http\Controllers\Api\FaqController::class, 'restore']);
+    Route::delete('/faqs/{id}/force', [App\Http\Controllers\Api\FaqController::class, 'forceDelete']);
+});
