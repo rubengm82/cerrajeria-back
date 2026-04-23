@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\DB;
 
 class ReportController extends Controller
 {
-    private const VALID_STATUSES = ['pending', 'shipped', 'installation_confirmed'];
+    private const VALID_STATUSES = ['pending', 'shipped', 'installation_confirmed', 'installation_pending'];
 
     public function summary(): JsonResponse
     {
@@ -50,7 +50,7 @@ class ReportController extends Controller
 
     private function topProducts()
     {
-        return $this->pricedOrderProductsQuery()->groupBy('products.id', 'products.name')->select('products.id','products.name', DB::raw('SUM(order_products.quantity) as quantity_sold'))->orderByDesc('quantity_sold')->limit(10)->get();
+        return $this->pricedOrderProductsQuery()->groupBy('products.id', 'products.name')->select('products.id', 'products.name', DB::raw('SUM(order_products.quantity) as quantity_sold'))->orderByDesc('quantity_sold')->limit(10)->get();
     }
 
     private function totalSalesAmount(): float

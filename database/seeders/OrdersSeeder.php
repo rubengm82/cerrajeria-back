@@ -20,14 +20,14 @@ class OrdersSeeder extends Seeder
             return;
         }
 
-        $statuses = ['in_cart', 'pending', 'shipped', 'installation_confirmed'];
-        $paymentMethods = ['paypal', 'card', 'bizum'];
+        $statuses = ['in_cart', 'pending', 'shipped', 'installation_confirmed', 'installation_pending'];
+        $paymentMethods = ['paypal', 'card', 'bizum', 'bank_transfer'];
 
         // Crear 15 pedidos aleatorios
         for ($i = 0; $i < 15; $i++) {
             $user = $users->random();
             $status = $faker->randomElement($statuses);
-            
+
             // Datos del cliente (facturación)
             $customerName = $user->name;
             $customerLastName1 = $user->last_name_one;
@@ -35,19 +35,33 @@ class OrdersSeeder extends Seeder
             $customerDni = $user->dni;
             $customerEmail = $user->email;
             $customerPhone = $user->phone;
-            
+
             // Direcciones
             $billingAddress = $user->billing_address ?? $faker->streetAddress();
             $billingZip = $user->billing_zip_code ?? $faker->postcode();
             $billingProvince = $user->billing_province ?? $faker->state();
-            
+
             $shippingAddress = $user->shipping_address ?? $faker->streetAddress();
             $shippingZip = $user->shipping_zip_code ?? $faker->postcode();
             $shippingProvince = $user->shipping_province ?? $faker->state();
-            
+
             $installationAddress = $faker->streetAddress();
             $installationZip = $faker->postcode();
             $installationProvince = $faker->state();
+
+            // Establecer shipped_at y installation_scheduled_at según el estado
+            $shippedAt = null;
+            $installingAt = null;
+
+            if ($status === 'shipped' || $status === 'installation_confirmed') {
+                $shippedAt = now()->subDays(rand(1, 5));
+            }
+
+            if ($status === 'installation_confirmed' || $status === 'installation_pending') {
+                $installingAt = $status === 'installation_confirmed'
+                    ? now()->subDays(rand(1, 3))
+                    : null;
+            }
 
             Order::create([
                 'status' => $status,
@@ -70,7 +84,8 @@ class OrdersSeeder extends Seeder
                 'installation_zip_code' => $installationZip,
                 'installation_province' => $installationProvince,
                 'installation_country' => 'España',
-                'shipped_at' => ($status === 'shipped' || $status === 'installation_confirmed') ? now()->subDays(rand(1, 5)) : null,
+                'shipped_at' => $shippedAt,
+                'installation_scheduled_at' => $installingAt,
                 'payment_method' => $faker->randomElement($paymentMethods),
                 'created_at' => now()->subDays(rand(6, 30)),
                 'updated_at' => now()->subDays(rand(0, 5)),

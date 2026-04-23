@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
-            $table->enum('status', ['in_cart', 'pending', 'shipped', 'installation_confirmed'])->default('in_cart');
+            $table->enum('status', ['in_cart', 'pending', 'shipped', 'installation_confirmed', 'installation_pending'])->default('in_cart');
             $table->foreignId('user_id')->nullable()->constrained('users')->onDelete('set null');
             $table->string('customer_name')->nullable();
             $table->string('customer_last_name_one')->nullable();
@@ -36,7 +36,8 @@ return new class extends Migration
             $table->decimal('shipping_price', 10, 2)->default(0);
             $table->decimal('installation_price', 10, 2)->default(0);
             $table->timestamp('shipped_at')->nullable();
-            $table->enum('payment_method', ['paypal', 'card', 'bizum']);
+            $table->timestamp('installation_scheduled_at')->nullable();
+            $table->enum('payment_method', ['paypal', 'card', 'bizum', 'bank_transfer']);
             $table->timestamps();
             $table->softDeletes();
         });

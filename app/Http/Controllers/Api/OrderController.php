@@ -336,7 +336,7 @@ class OrderController extends Controller
             'order.shipping_zip_code' => 'nullable|string|max:10',
             'order.shipping_province' => 'nullable|string|max:255',
             'order.shipping_country' => 'nullable|string|max:255',
-            'order.payment_method' => 'required|in:paypal,card,bizum',
+            'order.payment_method' => 'required|in:paypal,card,bizum,bank_transfer',
             'items' => 'required|array|min:1',
             'items.*.type' => 'required|in:product,pack',
             'items.*.id' => 'required|integer',
@@ -700,8 +700,8 @@ class OrderController extends Controller
             'user_id' => 'required|exists:users,id',
             'installation_address' => 'required|string|max:255',
             'shipping_address' => 'required|string|max:255',
-            'payment_method' => 'required|in:paypal,card,bizum',
-            'status' => 'nullable|in:in_cart,pending,shipped,installation_confirmed',
+            'payment_method' => 'required|in:paypal,card,bizum,bank_transfer',
+            'status' => 'nullable|in:in_cart,pending,shipped,installation_confirmed,installation_pending',
         ]);
 
         $order = Order::create($validated);
@@ -738,8 +738,8 @@ class OrderController extends Controller
             'customer_zip_code' => 'sometimes|string|max:10',
             'installation_address' => 'sometimes|string|max:255',
             'shipping_address' => 'sometimes|string|max:255',
-            'payment_method' => 'sometimes|in:paypal,card,bizum',
-            'status' => 'sometimes|in:in_cart,pending,shipped,installation_confirmed',
+            'payment_method' => 'sometimes|in:paypal,card,bizum,bank_transfer',
+            'status' => 'sometimes|in:in_cart,pending,shipped,installation_confirmed,installation_pending',
             'shipped_at' => 'nullable|date',
         ]);
 

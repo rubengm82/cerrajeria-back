@@ -29,6 +29,7 @@ class Order extends Model
         'installation_zip_code',
         'installation_province',
         'installation_country',
+        'installation_scheduled_at',
         'shipping_address',
         'shipping_zip_code',
         'shipping_province',
@@ -41,6 +42,7 @@ class Order extends Model
 
     protected $casts = [
         'shipped_at' => 'datetime',
+        'installation_scheduled_at' => 'datetime',
         'shipping_price' => 'decimal:2',
         'installation_price' => 'decimal:2',
     ];
@@ -59,8 +61,8 @@ class Order extends Model
     public function products(): BelongsToMany
     {
         return $this->belongsToMany(Product::class, 'order_products')
-                    ->withPivot('quantity', 'installation_requested')
-                    ->withTimestamps();
+            ->withPivot('quantity', 'installation_requested')
+            ->withTimestamps();
     }
 
     /**
@@ -69,7 +71,7 @@ class Order extends Model
     public function packs(): BelongsToMany
     {
         return $this->belongsToMany(Pack::class, 'order_packs')
-                    ->withPivot('quantity')
-                    ->withTimestamps();
+            ->withPivot('quantity')
+            ->withTimestamps();
     }
 }
