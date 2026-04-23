@@ -16,17 +16,17 @@ class CategoriesSeeder extends Seeder
             [
                 'name' => 'Cilindres',
                 'is_important_to_show' => true,
-                'image' => 'categories/bombines-seguridad.jpg',
+                'image' => null,
             ],
             [
                 'name' => 'Escuts',
                 'is_important_to_show' => true,
-                'image' => 'categories/escudos-protectores.jpg',
+                'image' => null,
             ],
             [
                 'name' => 'Segon Pany',
                 'is_important_to_show' => true,
-                'image' => 'categories/accesorios-cerrajeria.jpg',
+                'image' =>  null,
             ],
         ];
 
