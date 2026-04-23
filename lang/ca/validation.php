@@ -181,6 +181,8 @@ return [
         'attribute-name' => [
             'rule-name' => 'missatge-personalitzat',
         ],
+
+        'conflict_ranges' => 'El :attribute entra en conflicte amb un rang de dates existent.',
     ],
 
     /*

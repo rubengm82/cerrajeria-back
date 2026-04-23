@@ -182,6 +182,8 @@ return [
         'attribute-name' => [
             'rule-name' => 'custom-message',
         ],
+
+        'conflict_ranges' => 'The :attribute conflicts with an existing date range.',
     ],
 
     /*
