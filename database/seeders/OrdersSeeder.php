@@ -20,7 +20,7 @@ class OrdersSeeder extends Seeder
             return;
         }
 
-        $statuses = ['in_cart', 'pending', 'shipped', 'installation_confirmed', 'installation_pending'];
+        $statuses = ['in_cart', 'pending', 'shipped', 'installation_confirmed', 'installation_pending', 'installation_finished'];
         $paymentMethods = ['paypal', 'card', 'bizum', 'bank_transfer'];
 
         // Crear 15 pedidos aleatorios
@@ -53,12 +53,12 @@ class OrdersSeeder extends Seeder
             $shippedAt = null;
             $installingAt = null;
 
-            if ($status === 'shipped' || $status === 'installation_confirmed') {
+            if ($status === 'shipped' || $status === 'installation_confirmed' || $status === 'installation_finished') {
                 $shippedAt = now()->subDays(rand(1, 5));
             }
 
-            if ($status === 'installation_confirmed' || $status === 'installation_pending') {
-                $installingAt = $status === 'installation_confirmed'
+            if ($status === 'installation_confirmed' || $status === 'installation_pending' || $status === 'installation_finished') {
+                $installingAt = ($status === 'installation_confirmed' || $status === 'installation_finished')
                     ? now()->subDays(rand(1, 3))
                     : null;
             }

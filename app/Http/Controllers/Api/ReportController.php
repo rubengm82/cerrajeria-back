@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\DB;
 
 class ReportController extends Controller
 {
-    private const VALID_STATUSES = ['pending', 'shipped', 'installation_confirmed', 'installation_pending'];
+    private const VALID_STATUSES = ['pending', 'shipped', 'installation_confirmed', 'installation_pending', 'installation_finished'];
 
     public function summary(): JsonResponse
     {

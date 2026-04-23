@@ -701,7 +701,7 @@ class OrderController extends Controller
             'installation_address' => 'required|string|max:255',
             'shipping_address' => 'required|string|max:255',
             'payment_method' => 'required|in:paypal,card,bizum,bank_transfer',
-            'status' => 'nullable|in:in_cart,pending,shipped,installation_confirmed,installation_pending',
+            'status' => 'nullable|in:in_cart,pending,shipped,installation_confirmed,installation_pending,installation_finished',
         ]);
 
         $order = Order::create($validated);
@@ -739,9 +739,9 @@ class OrderController extends Controller
             'installation_address' => 'sometimes|string|max:255',
             'shipping_address' => 'sometimes|string|max:255',
             'payment_method' => 'sometimes|in:paypal,card,bizum,bank_transfer',
-            'status' => 'sometimes|in:in_cart,pending,shipped,installation_confirmed,installation_pending',
+            'status' => 'sometimes|in:in_cart,pending,shipped,installation_confirmed,installation_pending,installation_finished',
             'shipped_at' => 'nullable|date',
-            'installation_scheduled_at' => 'nullable|date',
+            'installation_scheduled_at' => 'nullable|date|required_if:status,installation_confirmed,installation_finished',
         ]);
 
         DB::beginTransaction();
@@ -764,10 +764,12 @@ class OrderController extends Controller
                 $validated['installation_scheduled_at'] = null;
             }
 
-            // Auto-set status to installation_confirmed if installation_scheduled_at is provided
+            // Auto-set status to installation_confirmed if installation_scheduled_at is provided and order is currently pending
             if (isset($validated['installation_scheduled_at']) && $validated['installation_scheduled_at'] !== null) {
-                $validated['status'] = 'installation_confirmed';
-                $nextStatus = 'installation_confirmed';
+                if ($order->status === 'installation_pending') {
+                    $validated['status'] = 'installation_confirmed';
+                    $nextStatus = 'installation_confirmed';
+                }
             }
 
             if ($order->status === 'in_cart' && $nextStatus === 'pending') {

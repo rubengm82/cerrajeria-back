@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
-            $table->enum('status', ['in_cart', 'pending', 'shipped', 'installation_confirmed', 'installation_pending'])->default('in_cart');
+            $table->enum('status', ['in_cart', 'pending', 'shipped', 'installation_confirmed', 'installation_pending', 'installation_finished'])->default('in_cart');
             $table->foreignId('user_id')->nullable()->constrained('users')->onDelete('set null');
             $table->string('customer_name')->nullable();
             $table->string('customer_last_name_one')->nullable();
