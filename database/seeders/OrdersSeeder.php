@@ -20,7 +20,7 @@ class OrdersSeeder extends Seeder
             return;
         }
 
-        $statuses = ['in_cart', 'pending', 'shipped', 'installation_confirmed', 'installation_pending', 'installation_finished'];
+        $statuses = ['pending', 'shipped', 'installation_confirmed', 'installation_pending', 'installation_finished'];
         $paymentMethods = ['paypal', 'card', 'bizum', 'bank_transfer'];
 
         // Crear 15 pedidos aleatorios
