@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use App\Models\Order;
 use App\Models\Product;
 use App\Models\User;
+use App\Models\CommerceSetting;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 
@@ -18,6 +19,7 @@ class OrdersSeeder extends Seeder
         $faker = \Faker\Factory::create('es_ES');
         $users = User::all();
         $products = Product::all();
+        $settings = CommerceSetting::current();
 
         if ($users->isEmpty() || $products->isEmpty()) {
             return;
@@ -105,12 +107,10 @@ class OrdersSeeder extends Seeder
             $selectedProducts = $products->random(min($numProducts, $products->count()));
 
             $subtotal = 0;
-            $shippingPrice = 0;
-            $installationPrice = 0;
 
             foreach ($selectedProducts as $product) {
                 $quantity = rand(1, 3);
-                $installationRequested = $product->is_installable ? $faker->randomElement([0, 1]) : 0;
+                $installationRequested = in_array($status, ['installation_confirmed', 'installation_pending', 'installation_finished']) ? 1 : 0;
 
                 $order->products()->attach($product->id, [
                     'quantity' => $quantity,
@@ -119,13 +119,27 @@ class OrdersSeeder extends Seeder
                     'updated_at' => now(),
                 ]);
 
-                $productPrice = $product->price * $quantity;
-                $subtotal += $productPrice;
+                $subtotal += $product->price * $quantity;
+            }
 
-                if ($product->is_installable && $installationRequested) {
-                    $installationPrice += $productPrice;
-                } else {
-                    $shippingPrice += $productPrice;
+            $shippingPrice = 0;
+            $installationPrice = 0;
+
+            $onlineStatuses = ['pending', 'shipped'];
+            $installationStatuses = ['installation_confirmed', 'installation_pending', 'installation_finished'];
+
+            if (in_array($status, $onlineStatuses)) {
+                $shippingPrice = $settings->shipping_price;
+            } elseif (in_array($status, $installationStatuses)) {
+                $rules = $settings->installation_rules ?? [];
+                foreach ($rules as $rule) {
+                    $min = $rule['min_subtotal'] ?? 0;
+                    $max = $rule['max_subtotal'] ?? null;
+                    
+                    if ($subtotal >= $min && ($max === null || $subtotal <= $max)) {
+                        $installationPrice = $rule['price'] ?? 0;
+                        break;
+                    }
                 }
             }
 

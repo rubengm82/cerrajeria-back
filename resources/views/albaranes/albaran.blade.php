@@ -231,6 +231,20 @@ body {
             <td class="value">{{ number_format($albaran->subtotal, 2, ',', '.') }} €</td>
         </tr>
 
+        @if($albaran->shipping_price > 0)
+        <tr>
+            <td class="label">Enviament:</td>
+            <td class="value">{{ number_format($albaran->shipping_price, 2, ',', '.') }} €</td>
+        </tr>
+        @endif
+
+        @if($albaran->installation_price > 0)
+        <tr>
+            <td class="label">Instal·lació:</td>
+            <td class="value">{{ number_format($albaran->installation_price, 2, ',', '.') }} €</td>
+        </tr>
+        @endif
+
         @if($albaran->tax_rate > 0)
         <tr>
             <td class="label">IVA ({{ $albaran->tax_rate }}%):</td>

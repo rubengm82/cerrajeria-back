@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Order;
+use App\Models\CommerceSetting;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Auth;
 
@@ -10,26 +11,17 @@ class AlbaranController extends Controller
 {
     public function download($id)
     {
-        // Get the order with related data
         $order = Order::with('user', 'products', 'packs')->findOrFail($id);
-
         $user = Auth::user();
 
-        // Check if user can access this order
         if ($user->role !== 'admin' && $user->role !== 1 && $order->user_id !== $user->id) {
             abort(403, 'No tienes permiso para acceder a este albarán.');
         }
 
-        // Prepare albaran data from order
         $albaran = $this->prepareAlbaranData($order);
-
-        // Generate PDF
         $pdf = Pdf::loadView('albaranes.albaran', compact('albaran'));
-
-        // Set paper size and orientation
         $pdf->setPaper('a4', 'portrait');
 
-        // Return PDF download
         return $pdf->download('albaran-'.$order->id.'.pdf');
     }
 
@@ -43,13 +35,7 @@ class AlbaranController extends Controller
             $unitPrice = $product->price;
             $total = $quantity * $unitPrice;
             $subtotal += $total;
-
-            $items[] = (object) [
-                'description' => $product->name,
-                'quantity' => $quantity,
-                'unit_price' => $unitPrice,
-                'total' => $total,
-            ];
+            $items[] = (object) ['description' => $product->name, 'quantity' => $quantity, 'unit_price' => $unitPrice, 'total' => $total];
         }
 
         foreach ($order->packs as $pack) {
@@ -57,23 +43,39 @@ class AlbaranController extends Controller
             $unitPrice = $pack->total_price;
             $total = $quantity * $unitPrice;
             $subtotal += $total;
+            $items[] = (object) ['description' => 'Pack: '.$pack->name, 'quantity' => $quantity, 'unit_price' => $unitPrice, 'total' => $total];
+        }
 
-            $items[] = (object) [
-                'description' => 'Pack: '.$pack->name,
-                'quantity' => $quantity,
-                'unit_price' => $unitPrice,
-                'total' => $total,
-            ];
+        $settings = CommerceSetting::current();
+        $shippingPrice = 0;
+        $installationPrice = 0;
+
+        $onlineStatuses = ['pending', 'shipped'];
+        $installationStatuses = ['installation_confirmed', 'installation_pending', 'installation_finished'];
+
+        if (in_array($order->status, $onlineStatuses)) {
+            $shippingPrice = (float) $settings->shipping_price;
+        } elseif (in_array($order->status, $installationStatuses)) {
+            $rules = $settings->installation_rules ?? [];
+            // Ordenamos reglas por min_subtotal para asegurar el orden
+            usort($rules, fn($a, $b) => $a['min_subtotal'] <=> $b['min_subtotal']);
+            
+            foreach ($rules as $rule) {
+                $max = $rule['max_subtotal'];
+                // Si el subtotal es menor o igual al max, o si el max es null (infinito), aplicamos este precio
+                if ($max === null || $subtotal <= $max) {
+                    $installationPrice = (float) $rule['price'];
+                    break;
+                }
+            }
         }
 
         $taxRate = 21;
-        $taxAmount = $subtotal * ($taxRate / 100);
+        $taxAmount = ($subtotal + $shippingPrice + $installationPrice) * ($taxRate / 100);
 
         return (object) [
             'number' => 'ALB-'.str_pad($order->id, 6, '0', STR_PAD_LEFT),
             'date' => $order->created_at,
-            'due_date' => $order->created_at->addDays(30),
-
             'customer' => (object) [
                 'name' => $order->customer_name ?? $order->user->name ?? '',
                 'last_name_one' => $order->customer_last_name_one ?? $order->user->last_name_one ?? '',
@@ -86,12 +88,13 @@ class AlbaranController extends Controller
                 'email' => $order->customer_email ?? $order->user->email ?? '',
                 'phone' => $order->customer_phone ?? $order->user->phone ?? '',
             ],
-
             'items' => $items,
             'subtotal' => $subtotal,
+            'shipping_price' => $shippingPrice,
+            'installation_price' => $installationPrice,
             'tax_rate' => $taxRate,
             'tax_amount' => $taxAmount,
-            'total' => $subtotal + $taxAmount,
+            'total' => $subtotal + $shippingPrice + $installationPrice + $taxAmount,
         ];
     }
 }
