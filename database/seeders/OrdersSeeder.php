@@ -3,8 +3,10 @@
 namespace Database\Seeders;
 
 use App\Models\Order;
+use App\Models\Product;
 use App\Models\User;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 
 class OrdersSeeder extends Seeder
 {
@@ -15,10 +17,16 @@ class OrdersSeeder extends Seeder
     {
         $faker = \Faker\Factory::create('es_ES');
         $users = User::all();
+        $products = Product::all();
 
-        if ($users->isEmpty()) {
+        if ($users->isEmpty() || $products->isEmpty()) {
             return;
         }
+
+        // Limpiar tabla orders antes de insertar
+        DB::statement('SET FOREIGN_KEY_CHECKS=0;');
+        Order::query()->delete();
+        DB::statement('SET FOREIGN_KEY_CHECKS=1;');
 
         $statuses = ['pending', 'shipped', 'installation_confirmed', 'installation_pending', 'installation_finished'];
         $paymentMethods = ['paypal', 'card', 'bizum', 'bank_transfer'];
@@ -53,7 +61,7 @@ class OrdersSeeder extends Seeder
             $shippedAt = null;
             $installingAt = null;
 
-            if ($status === 'pending' || $status === 'shipped') {
+            if ($status === 'shipped') {
                 $shippedAt = now()->subDays(rand(1, 5));
             }
 
@@ -63,7 +71,8 @@ class OrdersSeeder extends Seeder
                     : null;
             }
 
-            Order::create([
+            // Crear orden
+            $order = Order::create([
                 'status' => $status,
                 'user_id' => $user->id,
                 'customer_name' => $customerName,
@@ -89,6 +98,41 @@ class OrdersSeeder extends Seeder
                 'payment_method' => $faker->randomElement($paymentMethods),
                 'created_at' => now()->subDays(rand(6, 30)),
                 'updated_at' => now()->subDays(rand(0, 5)),
+            ]);
+
+            // Asignar productos aleatorios a la orden
+            $numProducts = rand(1, 4);
+            $selectedProducts = $products->random(min($numProducts, $products->count()));
+
+            $subtotal = 0;
+            $shippingPrice = 0;
+            $installationPrice = 0;
+
+            foreach ($selectedProducts as $product) {
+                $quantity = rand(1, 3);
+                $installationRequested = $product->is_installable ? $faker->randomElement([0, 1]) : 0;
+
+                $order->products()->attach($product->id, [
+                    'quantity' => $quantity,
+                    'installation_requested' => $installationRequested,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]);
+
+                $productPrice = $product->price * $quantity;
+                $subtotal += $productPrice;
+
+                if ($product->is_installable && $installationRequested) {
+                    $installationPrice += $productPrice;
+                } else {
+                    $shippingPrice += $productPrice;
+                }
+            }
+
+            // Actualizar precios en la orden
+            $order->update([
+                'shipping_price' => $shippingPrice,
+                'installation_price' => $installationPrice,
             ]);
         }
     }
