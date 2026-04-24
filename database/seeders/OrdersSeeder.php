@@ -4,10 +4,10 @@ namespace Database\Seeders;
 
 use App\Models\CommerceSetting;
 use App\Models\Order;
+use App\Models\Pack;
 use App\Models\Product;
 use App\Models\User;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\DB;
 
 class OrdersSeeder extends Seeder
 {
@@ -117,6 +117,24 @@ class OrdersSeeder extends Seeder
                 $subtotal += $product->price * $quantity;
             }
 
+            // Asignar packs aleatorios a la orden (si existen)
+            $packs = Pack::all();
+            if (! $packs->isEmpty()) {
+                $numPacks = rand(0, 2); // 0 a 2 packs por orden
+                if ($numPacks > 0) {
+                    $selectedPacks = $packs->random(min($numPacks, $packs->count()));
+                    foreach ($selectedPacks as $pack) {
+                        $quantity = rand(1, 2);
+                        $order->packs()->attach($pack->id, [
+                            'quantity' => $quantity,
+                            'created_at' => now(),
+                            'updated_at' => now(),
+                        ]);
+                        $subtotal += $pack->total_price * $quantity;
+                    }
+                }
+            }
+
             $shippingPrice = 0;
             $installationPrice = 0;
 
@@ -127,12 +145,14 @@ class OrdersSeeder extends Seeder
                 $shippingPrice = $settings->shipping_price;
             } elseif (in_array($status, $installationStatuses)) {
                 $rules = $settings->installation_rules ?? [];
-                foreach ($rules as $rule) {
-                    $min = $rule['min_subtotal'] ?? 0;
-                    $max = $rule['max_subtotal'] ?? null;
+                // Ordenamos reglas por min_subtotal para asegurar el orden (igual que AlbaranController)
+                usort($rules, fn ($a, $b) => $a['min_subtotal'] <=> $b['min_subtotal']);
 
-                    if ($subtotal >= $min && ($max === null || $subtotal <= $max)) {
-                        $installationPrice = $rule['price'] ?? 0;
+                foreach ($rules as $rule) {
+                    $max = $rule['max_subtotal'];
+                    // Si el subtotal es menor o igual al max, o si el max es null (infinito), aplicamos este precio
+                    if ($max === null || $subtotal <= $max) {
+                        $installationPrice = (float) ($rule['price'] ?? 0);
                         break;
                     }
                 }
@@ -142,6 +162,7 @@ class OrdersSeeder extends Seeder
             $order->update([
                 'shipping_price' => $shippingPrice,
                 'installation_price' => $installationPrice,
+                'subtotal' => $subtotal,
             ]);
         }
     }

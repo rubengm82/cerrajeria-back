@@ -35,6 +35,7 @@ return new class extends Migration
             $table->string('shipping_country')->nullable()->default('España');
             $table->decimal('shipping_price', 10, 2)->default(0);
             $table->decimal('installation_price', 10, 2)->default(0);
+            $table->decimal('subtotal', 10, 2)->default(0);
             $table->timestamp('shipped_at')->nullable();
             $table->timestamp('installation_scheduled_at')->nullable();
             $table->enum('payment_method', ['paypal', 'card', 'bizum', 'bank_transfer']);

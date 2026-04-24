@@ -36,6 +36,7 @@ class Order extends Model
         'shipping_country',
         'shipping_price',
         'installation_price',
+        'subtotal',
         'shipped_at',
         'payment_method',
     ];
@@ -45,6 +46,7 @@ class Order extends Model
         'installation_scheduled_at' => 'datetime',
         'shipping_price' => 'decimal:2',
         'installation_price' => 'decimal:2',
+        'subtotal' => 'decimal:2',
     ];
 
     /**
