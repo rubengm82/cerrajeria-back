@@ -2,10 +2,10 @@
 
 namespace Database\Seeders;
 
+use App\Models\CommerceSetting;
 use App\Models\Order;
 use App\Models\Product;
 use App\Models\User;
-use App\Models\CommerceSetting;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 
@@ -24,11 +24,6 @@ class OrdersSeeder extends Seeder
         if ($users->isEmpty() || $products->isEmpty()) {
             return;
         }
-
-        // Limpiar tabla orders antes de insertar
-        DB::statement('SET FOREIGN_KEY_CHECKS=0;');
-        Order::query()->delete();
-        DB::statement('SET FOREIGN_KEY_CHECKS=1;');
 
         $statuses = ['pending', 'shipped', 'installation_confirmed', 'installation_pending', 'installation_finished'];
         $paymentMethods = ['paypal', 'card', 'bizum', 'bank_transfer'];
@@ -135,7 +130,7 @@ class OrdersSeeder extends Seeder
                 foreach ($rules as $rule) {
                     $min = $rule['min_subtotal'] ?? 0;
                     $max = $rule['max_subtotal'] ?? null;
-                    
+
                     if ($subtotal >= $min && ($max === null || $subtotal <= $max)) {
                         $installationPrice = $rule['price'] ?? 0;
                         break;
