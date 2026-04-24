@@ -53,7 +53,7 @@ class OrdersSeeder extends Seeder
             $shippedAt = null;
             $installingAt = null;
 
-            if ($status === 'shipped' || $status === 'installation_confirmed' || $status === 'installation_finished') {
+            if ($status === 'pending' || $status === 'shipped') {
                 $shippedAt = now()->subDays(rand(1, 5));
             }
 
