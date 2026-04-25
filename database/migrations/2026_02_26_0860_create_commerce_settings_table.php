@@ -11,7 +11,6 @@ return new class extends Migration
         Schema::create('commerce_settings', function (Blueprint $table) {
             $table->id();
             $table->decimal('shipping_price', 10, 2)->default(0);
-            $table->json('installation_rules')->nullable();
             $table->timestamps();
         });
     }

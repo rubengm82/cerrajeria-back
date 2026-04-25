@@ -32,16 +32,7 @@ class OrderProductsSeeder extends Seeder
             $installationPrice = 0;
 
             if (in_array($order->status, $installationStatuses)) {
-                $rules = $settings->installation_rules ?? [];
-                usort($rules, fn($a, $b) => $a['min_subtotal'] <=> $b['min_subtotal']);
-
-                foreach ($rules as $rule) {
-                    $max = $rule['max_subtotal'];
-                    if ($max === null || $subtotal <= $max) {
-                        $installationPrice = (float) ($rule['price'] ?? 0);
-                        break;
-                    }
-                }
+                $installationPrice = $settings->resolveInstallationPrice((float) $subtotal);
             }
 
             $order->update([

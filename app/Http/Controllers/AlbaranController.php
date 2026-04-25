@@ -56,18 +56,7 @@ class AlbaranController extends Controller
         if (in_array($order->status, $onlineStatuses)) {
             $shippingPrice = (float) $settings->shipping_price;
         } elseif (in_array($order->status, $installationStatuses)) {
-            $rules = $settings->installation_rules ?? [];
-            // Ordenamos reglas por min_subtotal para asegurar el orden
-            usort($rules, fn($a, $b) => $a['min_subtotal'] <=> $b['min_subtotal']);
-            
-            foreach ($rules as $rule) {
-                $max = $rule['max_subtotal'];
-                // Si el subtotal es menor o igual al max, o si el max es null (infinito), aplicamos este precio
-                if ($max === null || $subtotal <= $max) {
-                    $installationPrice = (float) $rule['price'];
-                    break;
-                }
-            }
+            $installationPrice = $settings->resolveInstallationPrice((float) $subtotal);
         }
 
         $taxRate = 21;

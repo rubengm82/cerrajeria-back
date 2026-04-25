@@ -6,12 +6,13 @@ use App\Http\Controllers\Controller;
 use App\Models\CommerceSetting;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class CommerceSettingController extends Controller
 {
     public function show(): JsonResponse
     {
-        return response()->json(CommerceSetting::current());
+        return response()->json(CommerceSetting::current()->load('installationPriceRules'));
     }
 
     public function update(Request $request): JsonResponse
@@ -36,12 +37,26 @@ class CommerceSettingController extends Controller
             ->values()
             ->all();
 
-        $setting = CommerceSetting::current();
-        $setting->update([
-            'shipping_price' => $validated['shipping_price'],
-            'installation_rules' => $rules,
-        ]);
+        $setting = DB::transaction(function () use ($validated, $rules) {
+            $setting = CommerceSetting::current();
+            $setting->update([
+                'shipping_price' => $validated['shipping_price'],
+            ]);
 
-        return response()->json($setting->fresh());
+            $setting->installationPriceRules()->delete();
+            $setting->installationPriceRules()->createMany(
+                collect($rules)
+                    ->values()
+                    ->map(fn (array $rule, int $index) => [
+                        ...$rule,
+                        'sort_order' => $index,
+                    ])
+                    ->all()
+            );
+
+            return $setting->fresh()->load('installationPriceRules');
+        });
+
+        return response()->json($setting);
     }
 }

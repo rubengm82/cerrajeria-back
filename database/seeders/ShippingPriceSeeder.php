@@ -2,9 +2,9 @@
 
 namespace Database\Seeders;
 
+use App\Models\CommerceSetting;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\DB;
 
 class ShippingPriceSeeder extends Seeder
 {
@@ -22,14 +22,20 @@ class ShippingPriceSeeder extends Seeder
             ['min_subtotal' => 1001, 'max_subtotal' => null, 'price' => 270],
         ];
 
-        DB::table('commerce_settings')->updateOrInsert(
-            ['id' => 1],
-            [
-                'installation_rules' => json_encode($shippingRules),
-                'shipping_price' => 9,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]
+        $setting = CommerceSetting::query()->firstOrCreate(['id' => 1], [
+            'shipping_price' => 9,
+        ]);
+
+        $setting->update([
+            'shipping_price' => 9,
+        ]);
+
+        $setting->installationPriceRules()->delete();
+        $setting->installationPriceRules()->createMany(
+            collect($shippingRules)->values()->map(fn (array $rule, int $index) => [
+                ...$rule,
+                'sort_order' => $index,
+            ])->all()
         );
     }
 }

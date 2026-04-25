@@ -451,16 +451,7 @@ class OrderController extends Controller
             $subtotal += (float) $pack->total_price * (int) $item['quantity'];
         }
 
-        foreach (CommerceSetting::current()->installation_rules ?? [] as $rule) {
-            $min = (float) ($rule['min_subtotal'] ?? 0);
-            $max = $rule['max_subtotal'] ?? null;
-
-            if ($subtotal >= $min && ($max === null || $subtotal <= (float) $max)) {
-                return (float) ($rule['price'] ?? 0);
-            }
-        }
-
-        return 0;
+        return CommerceSetting::current()->resolveInstallationPrice($subtotal);
     }
 
     private function getProductSalePrice(Product $product): float
