@@ -186,6 +186,14 @@ body {
                     E-Mail: {{ $albaran->customer->email }}<br>
                     Telf: {{ $albaran->customer->phone }}
                 </div>
+                @if(!empty($albaran->billing->address))
+                <div class="section-title" style="margin-top: 18px;">Facturar a:</div>
+                <div class="customer-info">
+                    {{ $albaran->billing->address }}<br>
+                    {{ $albaran->billing->zip_code }} {{ $albaran->billing->province }}<br>
+                    {{ $albaran->billing->country }}
+                </div>
+                @endif
             </td>
             <td width="50%">
                 <table class="meta-table">

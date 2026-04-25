@@ -77,6 +77,12 @@ class AlbaranController extends Controller
                 'email' => $order->customer_email ?? $order->user->email ?? '',
                 'phone' => $order->customer_phone ?? $order->user->phone ?? '',
             ],
+            'billing' => (object) [
+                'address' => $order->billing_address,
+                'zip_code' => $order->billing_zip_code,
+                'province' => $order->billing_province,
+                'country' => $order->billing_country,
+            ],
             'items' => $items,
             'subtotal' => $subtotal,
             'shipping_price' => $shippingPrice,
