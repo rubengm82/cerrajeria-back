@@ -94,7 +94,7 @@ class OrderController extends Controller
             $order = Order::create([
                 'user_id' => $user->id,
                 'status' => 'in_cart',
-                'installation_address' => $user->shipping_address ?? 'Pendent de confirmar',
+                'installation_address' => null,
                 'shipping_address' => $user->shipping_address ?? 'Pendent de confirmar',
                 'payment_method' => 'bizum',
             ]);
@@ -164,7 +164,7 @@ class OrderController extends Controller
             $order = Order::create([
                 'user_id' => $user->id,
                 'status' => 'in_cart',
-                'installation_address' => $user->shipping_address ?? 'Pendent de confirmar',
+                'installation_address' => null,
                 'shipping_address' => $user->shipping_address ?? 'Pendent de confirmar',
                 'payment_method' => 'bizum',
             ]);
@@ -223,7 +223,7 @@ class OrderController extends Controller
             $order = Order::create([
                 'user_id' => $user->id,
                 'status' => 'in_cart',
-                'installation_address' => $user->shipping_address ?? 'Pendent de confirmar',
+                'installation_address' => null,
                 'shipping_address' => $user->shipping_address ?? 'Pendent de confirmar',
                 'payment_method' => 'bizum',
             ]);
@@ -332,7 +332,7 @@ class OrderController extends Controller
             'customer.billing_country' => 'nullable|string|max:255',
             'customer.province' => 'nullable|string|max:255',
             'customer.country' => 'nullable|string|max:255',
-            'order.installation_address' => 'required|string|max:255',
+            'order.installation_address' => 'nullable|string|max:255',
             'order.installation_zip_code' => 'nullable|string|max:10',
             'order.installation_province' => 'nullable|string|max:255',
             'order.installation_country' => 'nullable|string|max:255',
@@ -376,9 +376,11 @@ class OrderController extends Controller
             $this->reserveProductStockItems($productItems);
             $this->reservePackStockItems($packItems);
 
+            $hasInstallation = collect($productItems)->contains(fn ($item) => (bool) ($item['installation_requested'] ?? false));
+
             $order = Order::create([
                 'user_id' => $user?->id,
-                'status' => 'pending',
+                'status' => $hasInstallation ? 'installation_pending' : 'pending',
                 'customer_name' => $customer['name'],
                 'customer_last_name_one' => $customer['last_name_one'],
                 'customer_last_name_second' => $customer['last_name_second'] ?? null,
@@ -701,7 +703,7 @@ class OrderController extends Controller
     {
         $validated = $request->validate([
             'user_id' => 'required|exists:users,id',
-            'installation_address' => 'required|string|max:255',
+            'installation_address' => 'nullable|string|max:255',
             'shipping_address' => 'required|string|max:255',
             'payment_method' => 'required|in:paypal,card,bizum,bank_transfer',
             'status' => 'nullable|in:in_cart,pending,shipped,installation_confirmed,installation_pending,installation_finished',
@@ -745,7 +747,7 @@ class OrderController extends Controller
             'billing_zip_code' => 'nullable|string|max:10',
             'billing_province' => 'nullable|string|max:255',
             'billing_country' => 'nullable|string|max:255',
-            'installation_address' => 'sometimes|string|max:255',
+            'installation_address' => 'sometimes|nullable|string|max:255',
             'installation_zip_code' => 'nullable|string|max:10',
             'installation_province' => 'nullable|string|max:255',
             'installation_country' => 'nullable|string|max:255',
@@ -806,6 +808,11 @@ class OrderController extends Controller
                     $packItems[$pack->id] = [
                         'quantity' => (int) $pack->pivot->quantity,
                     ];
+                }
+
+                if (collect($productItems)->contains(fn ($item) => (bool) ($item['installation_requested'] ?? false))) {
+                    $validated['status'] = 'installation_pending';
+                    $nextStatus = 'installation_pending';
                 }
 
                 $validated['shipping_price'] = $setting->shipping_price;

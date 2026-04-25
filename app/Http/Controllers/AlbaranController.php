@@ -9,6 +9,8 @@ use Illuminate\Support\Facades\Auth;
 
 class AlbaranController extends Controller
 {
+    private const VAT_RATE = 0.21;
+
     public function download($id)
     {
         $order = Order::with('user', 'products', 'packs')->findOrFail($id);
@@ -28,39 +30,68 @@ class AlbaranController extends Controller
     private function prepareAlbaranData($order)
     {
         $subtotal = 0;
+        $subtotalExcludingVat = 0;
+        $taxAmount = 0;
         $items = [];
 
         foreach ($order->products as $product) {
             $quantity = $product->pivot->quantity;
-            $unitPrice = $product->price;
+            $grossUnitPrice = (float) $product->price;
+            $discount = (float) ($product->discount ?? 0);
+            $unitPrice = $discount > 0
+                ? $grossUnitPrice * (1 - ($discount / 100))
+                : $grossUnitPrice;
+            $unitPriceExcludingVat = $this->getPriceExcludingVat($unitPrice);
+            $unitTaxAmount = $unitPrice - $unitPriceExcludingVat;
             $total = $quantity * $unitPrice;
+            $totalExcludingVat = $quantity * $unitPriceExcludingVat;
+            $totalTaxAmount = $quantity * $unitTaxAmount;
             $subtotal += $total;
-            $items[] = (object) ['description' => $product->name, 'quantity' => $quantity, 'unit_price' => $unitPrice, 'total' => $total];
+            $subtotalExcludingVat += $totalExcludingVat;
+            $taxAmount += $totalTaxAmount;
+            $items[] = (object) [
+                'description' => $product->name,
+                'quantity' => $quantity,
+                'unit_price' => $unitPriceExcludingVat,
+                'total' => $totalExcludingVat,
+            ];
         }
 
         foreach ($order->packs as $pack) {
             $quantity = $pack->pivot->quantity;
-            $unitPrice = $pack->total_price;
+            $unitPrice = (float) $pack->total_price;
+            $unitPriceExcludingVat = $this->getPriceExcludingVat($unitPrice);
+            $unitTaxAmount = $unitPrice - $unitPriceExcludingVat;
             $total = $quantity * $unitPrice;
+            $totalExcludingVat = $quantity * $unitPriceExcludingVat;
+            $totalTaxAmount = $quantity * $unitTaxAmount;
             $subtotal += $total;
-            $items[] = (object) ['description' => 'Pack: '.$pack->name, 'quantity' => $quantity, 'unit_price' => $unitPrice, 'total' => $total];
+            $subtotalExcludingVat += $totalExcludingVat;
+            $taxAmount += $totalTaxAmount;
+            $items[] = (object) [
+                'description' => 'Pack: '.$pack->name,
+                'quantity' => $quantity,
+                'unit_price' => $unitPriceExcludingVat,
+                'total' => $totalExcludingVat,
+            ];
         }
 
         $settings = CommerceSetting::current();
-        $shippingPrice = 0;
-        $installationPrice = 0;
+        $shippingPrice = (float) ($order->shipping_price ?? 0);
+        $installationPrice = (float) ($order->installation_price ?? 0);
 
         $onlineStatuses = ['pending', 'shipped'];
         $installationStatuses = ['installation_confirmed', 'installation_pending', 'installation_finished'];
 
         if (in_array($order->status, $onlineStatuses)) {
-            $shippingPrice = (float) $settings->shipping_price;
-        } elseif (in_array($order->status, $installationStatuses)) {
+            if ($shippingPrice === 0.0) {
+                $shippingPrice = (float) $settings->shipping_price;
+            }
+        } elseif (in_array($order->status, $installationStatuses) && $installationPrice === 0.0) {
             $installationPrice = $settings->resolveInstallationPrice((float) $subtotal);
         }
 
-        $taxRate = 21;
-        $taxAmount = ($subtotal + $shippingPrice + $installationPrice) * ($taxRate / 100);
+        $taxRate = (int) (self::VAT_RATE * 100);
 
         return (object) [
             'number' => 'ALB-'.str_pad($order->id, 6, '0', STR_PAD_LEFT),
@@ -84,12 +115,17 @@ class AlbaranController extends Controller
                 'country' => $order->billing_country,
             ],
             'items' => $items,
-            'subtotal' => $subtotal,
+            'subtotal' => $subtotalExcludingVat,
             'shipping_price' => $shippingPrice,
             'installation_price' => $installationPrice,
             'tax_rate' => $taxRate,
             'tax_amount' => $taxAmount,
-            'total' => $subtotal + $shippingPrice + $installationPrice + $taxAmount,
+            'total' => $subtotal + $shippingPrice + $installationPrice,
         ];
+    }
+
+    private function getPriceExcludingVat(float $price): float
+    {
+        return $price / (1 + self::VAT_RATE);
     }
 }

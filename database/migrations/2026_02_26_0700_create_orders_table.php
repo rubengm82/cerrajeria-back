@@ -29,7 +29,7 @@ return new class extends Migration
             $table->string('billing_zip_code')->nullable();
             $table->string('billing_province')->nullable();
             $table->string('billing_country')->nullable()->default('España');
-            $table->string('installation_address');
+            $table->string('installation_address')->nullable();
             $table->string('installation_zip_code')->nullable();
             $table->string('installation_province')->nullable();
             $table->string('installation_country')->nullable()->default('España');
